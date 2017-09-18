@@ -97,18 +97,20 @@ fun fib(n: Int): Int{
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int{
-
-    // алгоритм евклида
-    var a = m; var b = n; var c: Int;
-    while (a!=b){
-        if (a>b) {a -= b}
-        else {b -= a}
+    var c: Int = 0
+    if (m>n){
+        for (i in m..m*n){
+            if ((i%m == 0)&&(i%n == 0)){
+                c = i; break
+            }
+        }
     }
-
-    if (m>n) c = m else c = n
-    // прибавлять к большему числу НОД до нужных пор
-    while (!(c%m==0 && c%n==0)){
-        c += b
+    else{
+        for (i in n..m*n){
+            if ((i%m == 0)&&(i%n == 0)){
+                c = i; break
+            }
+        }
     }
     return c
 }
@@ -185,15 +187,18 @@ fun squareBetweenExists(m: Int, n: Int): Boolean{
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double{
-    var a = x ; var b = x
+    var x0 = x
+    while (abs(x0)>2*Math.PI){
+        if (x0 < 0) x0 += 2*Math.PI else x0 -= 2*Math.PI
+    }
+    var a = x0; var b = x0
     var i: Int = 0
     while (abs(b) >= eps){
         i++
-        b = pow(x,((2*i)+1).toDouble()) / factorial(2*i+1)
+        b = pow(x0,((2*i)+1).toDouble()) / factorial(2*i+1)
         if (i%2 == 1) a-=b else a+=b
     }
     return a
-    ///////////////////////////////////////////////////////////////////// ПОЧЕМУ НЕ ПРОХОДИТ ПОСЛЕДНИЙ ТЕСТ
 }
 
 /**
@@ -205,14 +210,17 @@ fun sin(x: Double, eps: Double): Double{
  */
 fun cos(x: Double, eps: Double): Double{
     var a: Double = 1.0; var b = a
+    var x0 = x
     var i: Int = 0
+    while (abs(x0)>2*Math.PI){
+        if (x0 < 0) x0 += 2*Math.PI else x0 -= 2*Math.PI
+    }
     while (abs(b) >= eps){
         i++
-        b = pow(x, 2*i.toDouble()) / factorial(2*i)
+        b = pow(x0, 2*i.toDouble()) / factorial(2*i)
         if (i%2 == 1) a -= b else a += b
     }
     return a
-    ///////////////////////////////////////////////////////////////////// ПОЧЕМУ НЕ ПРОХОДИТ ПОСЛЕДНИЙ ТЕСТ
 }
 
 /**

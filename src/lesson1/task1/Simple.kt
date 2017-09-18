@@ -30,7 +30,7 @@ fun seconds(hours: Int, minutes: Int, seconds: Int): Int = 3600*hours + 60*minut
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
 fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
-        0.04445*48*sagenes + 0.04445*16*arshins + 0.04445*vershoks
+        0.04445*(48*sagenes + 16*arshins + vershoks)
 
 /**
  * Пользователь задает угол в градусах, минутах и секундах (например, 36 градусов 14 минут 35 секунд).
@@ -65,10 +65,10 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
 fun accountInThreeYears(initial: Int, percent: Int): Double =
-        initial * ((percent.toDouble()+100)/100) * ((percent.toDouble()+100)/100) * ((percent.toDouble()+100)/100)
+        initial * pow((percent.toDouble()+100)/100, 3.0)
 
 /**
  * Пользователь задает целое трехзначное число (например, 478).
  *Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-fun numberRevert(number: Int): Int = (100*(number%10)+10*((number/10)%10)+(number/100))
+fun numberRevert(number: Int): Int = 100*(number%10)+10*((number/10)%10)+(number/100)
