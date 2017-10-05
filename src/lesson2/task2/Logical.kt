@@ -15,7 +15,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
 fun isNumberHappy(number: Int): Boolean =
-       (number/1000 + (number/100)%10) == ((number/10)%10 + number%10)
+       number/1000 + (number/100)%10 == (number/10)%10 + number%10
 
 /**
  * На шахматной доске стоят два ферзя (ферзь бьет по вертикали, горизонтали и диагоналям).
@@ -41,5 +41,10 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
-        (a<=r && b<=s)||(a<=s && b<=r)||(a<=r && c<=s)||(a<=s && c<=r)||(b<=r && c<=s)||(b<=s && c<=r)
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
+    val i = a <= r;     val j = b <= s
+    val m = a <= s;     val n = b <= r
+              val x = c <= s
+              val y = c <= r
+    return (i && j) || (m && n) || (i && x) || (m && y) || (n && x) || (j && y)
+}

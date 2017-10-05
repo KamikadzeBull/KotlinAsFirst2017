@@ -32,9 +32,9 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
 fun ageDescription(age: Int): String{
-    if ((age%100 in 5..20)||(age%10 in 5..9)||(age%10==0)) {return "$age лет"}
-    else if (age%10 in 2..4) {return "$age года"}
-         else {return "$age год"}
+    return if ((age%100 in 5..20)||(age%10 in 5..9)||(age%10==0)) "$age лет"
+           else if (age%10 in 2..4) "$age года"
+                else "$age год"
 }
 
 /**
@@ -120,14 +120,14 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int{
-    return when{
-        (c in a..b)&&(d in a..b) -> d-c
-        (a in c..d)&&(b in c..d) -> b-a
-        (c in a..b)&&(d>b) -> b-c
-        (a in c..d)&&(b>d) -> d-a
-        (a==b)&&(b==c)&&(c==d) -> 0
-        (c in a..d)&&(b==c) -> 0
-        (a in c..b)&&(d==a) -> 0
+    val i = c in a..b
+    val j = a in c..d
+    return when {
+        i && (d in a..b) -> d - c
+        j && (b in c..d) -> b - a
+        i && (d > b) -> b - c
+        j && (b > d) -> d - a
+        ((a == b) && (b == c) && (c == d))  ||  ((c in a..d) && (b == c))  ||  ((a in c..b) && (d == a)) -> 0
         else -> -1
     }
 }
