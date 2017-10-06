@@ -101,8 +101,7 @@ fun fib(n: Int): Int{
  */
 fun lcm(m: Int, n: Int): Int{
     var c = 0
-    var x = 0
-    if (m>n) x = m else x = n
+    val x = if (m>n) m else n
     for (i in x..m*n){
         if ((i%m == 0)&&(i%n == 0)){
             c = i
@@ -260,7 +259,7 @@ fun isPalindrome(n: Int): Boolean = n == revert(n)
 fun hasDifferentDigits(n: Int): Boolean{
     var a = n
     var b = 0
-    var k = a%10
+    val k = a%10
     do{
         b = b * 10 + k
         a /= 10

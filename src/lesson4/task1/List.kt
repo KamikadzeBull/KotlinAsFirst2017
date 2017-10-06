@@ -2,6 +2,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson3.task1.minDivisor
 import java.lang.Math.pow
 import java.lang.Math.sqrt
 
@@ -219,17 +220,13 @@ fun accumulate(list: MutableList<Double>): MutableList<Double>{
  */
 fun factorize(n: Int): List<Int>{
     var a = n
-    var list = mutableListOf<Int>()
-    while (a>1){
-        for (x in 2..a){
-            if ((prosto(x)) && (a%x == 0)){
-                list.add(x)
-                a /= x
-                break
-            }
-        }
+    val list = mutableListOf<Int>()
+    while (a > 1) {
+        val x = minDivisor(a)
+        list.add(x)
+        a /= x
     }
-    return list
+    return list.sorted()
 }
 
 /**
@@ -239,15 +236,8 @@ fun factorize(n: Int): List<Int>{
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
 fun factorizeToString(n: Int): String{
-    var list = factorize(n)
-    var s = "${list[0]}"
-    if (list.size>1) {
-        for (i in 1 until list.size) {
-            s += "*${list[i]}"
-        }
-    }
-    return s
-    // очень плохо себя чувствует на последнем тесте из-за factorize
+    val list = factorize(n)
+    return list.joinToString("*")
 }
 
 /**
@@ -258,7 +248,7 @@ fun factorizeToString(n: Int): String{
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int>{
-    var list = mutableListOf<Int>()
+    val list = mutableListOf<Int>()
     var a = n
     while (a>=base){
         list.add(0, a%base)
@@ -315,7 +305,7 @@ fun decimal(digits: List<Int>, base: Int): Int{
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int{
-    var list = mutableListOf<Int>()
+    val list = mutableListOf<Int>()
     for (i in 0 until str.length){
         when {
             str[i] in '0'..'9' -> list.add(str[i].toString().toInt())
@@ -365,22 +355,22 @@ fun roman(n: Int): String{
  */
 fun russian(n: Int): String{
     // заранее прошу прощения, если вашим глазам стало плохо
-    var list = mutableListOf<String>()
+    val list = mutableListOf<String>()
     val a1 = n/1000
     val a2 = n%1000
 
-    list.add(hund(a1))
-    list.add(dec(a1))
-    list.add(dig(a1))
-    replDec(list)
-    removeEmptyAndNull(list)
+    list.add(hund(a1)) // добавляем строку = сотням тысяч
+    list.add(dec(a1)) // добавляем строку = десяткам тысяч
+    list.add(dig(a1)) // добавляем строку = единицам тысяч
+    replDec(list) // связываем десятки и единицы в нормальное слово
+    removeEmptyAndNull(list) // удаляем пустые строки ради правильности дальнейшей обработки листа
     if (list.isNotEmpty())
-        thous(list)
-    list.add(hund(a2))
-    list.add(dec(a2))
-    list.add(dig(a2))
-    replDec(list)
-    removeEmptyAndNull(list)
+        thous(list) // в правильной форме связываем готовое число со словом "тысяча"
+    list.add(hund(a2)) // добавляем строку сотен
+    list.add(dec(a2)) // добавляем строку десятков
+    list.add(dig(a2)) // добавляем строку единиц
+    replDec(list) // снова творим дружбу десятков и единиц
+    removeEmptyAndNull(list) // снова удаляем пустые строки
     return list.joinToString(" ")
 }
 

@@ -98,6 +98,8 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
 fun triangleKind(a: Double, b: Double, c: Double): Int{
     val i: Double; val j: Double; val k: Double
     if ((a+b>c)&&(a+c>b)&&(b+c>a)){
+        /* самую большую сторону и присваиваем ее I
+           остальные присваиваем двум другим переменным */
         if ((a>=b)&&(a>=c)){
             i = a; j = b; k = c
         }
