@@ -101,20 +101,12 @@ fun fib(n: Int): Int{
  */
 fun lcm(m: Int, n: Int): Int{
     var c = 0
-    if (m>n){
-        for (i in m..m*n){
-            if ((i%m == 0)&&(i%n == 0)){
-                c = i
-                break
-            }
-        }
-    }
-    else{
-        for (i in n..m*n){
-            if ((i%m == 0)&&(i%n == 0)){
-                c = i
-                break
-            }
+    var x = 0
+    if (m>n) x = m else x = n
+    for (i in x..m*n){
+        if ((i%m == 0)&&(i%n == 0)){
+            c = i
+            break
         }
     }
     return c
