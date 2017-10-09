@@ -79,18 +79,9 @@ fun digitNumber(n: Int): Int{
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int{
-    var a = 0
-    var x2 = 1
-    var x1 = 1
-    return if (n<=2) 1
-    else{
-        for (i in 3..n){
-            a = x2 + x1
-            x1 = x2
-            x2 = a
-        }
-        a
-    }
+    val a = (1 + sqrt(5.0))/2
+    val b = (1 - sqrt(5.0))/2
+    return ((pow(a, n.toDouble()) - pow(b, n.toDouble())) / sqrt(5.0)).toInt()
 }
 
 /**
@@ -168,15 +159,15 @@ fun isCoPrime(m: Int, n: Int): Boolean{
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean{
     var a = 0.0
-    var i: Double = m.toDouble()
+    var i = m.toDouble()
     do{
-        if ((sqrt(i).toInt()).toDouble() == sqrt(i)){
-            a = sqrt(i)
+        if (sqrt(i).rem(1) == 0.0){
+            a = i;
             break
         }
-        else i += 1.0
-    }while (i<=n.toDouble())
-    return (a*a in m..n)
+        i++
+    }while(i<=n)
+    return (a!=0.0)
 }
 
 /**
@@ -275,14 +266,12 @@ fun hasDifferentDigits(n: Int): Boolean{
  * Например, 2-я цифра равна 4, 7-я 5, 12-я 6.
  */
 fun squareSequenceDigit(n: Int): Int{
-    var s: String
     var sL = 0
     var i = 0
     var j: Int
     while (sL<n){
         i++
-        s = "${i*i}"
-        sL += s.length
+        sL += "${i*i}".length
     }
     if (sL == n){
         return (i*i)%10
