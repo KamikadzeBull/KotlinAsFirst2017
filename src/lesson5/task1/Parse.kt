@@ -1,6 +1,8 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson5.task1
 
+import kotlin.text.StringBuilder
+
 /**
  * Пример
  *
@@ -66,7 +68,34 @@ fun main(args: Array<String>) {
  * День и месяц всегда представлять двумя цифрами, например: 03.04.2011.
  * При неверном формате входной строки вернуть пустую строку
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String{
+    try{
+        val list = str.split(" ")
+        if (list.size == 3) {
+            val day = list[0].toInt()
+            val month = when (list[1]) {
+                "января" -> 1
+                "февраля" -> 2
+                "марта" -> 3
+                "апреля" -> 4
+                "мая" -> 5
+                "июня" -> 6
+                "июля" -> 7
+                "августа" -> 8
+                "сентября" -> 9
+                "откября" -> 10
+                "ноября" -> 11
+                "декабря" -> 12
+                else -> throw Exception("месяц неверного формата")
+            }
+            return String.format("%02d.%02d.%s", day, month, list[2])
+        }
+        else throw Exception("неверный формат")
+    }
+    catch(e: Exception){
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -75,7 +104,34 @@ fun dateStrToDigit(str: String): String = TODO()
  * Перевести её в строковый формат вида "15 июля 2016".
  * При неверном формате входной строки вернуть пустую строку
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String{
+    try{
+        val list = digital.split(".")
+        if (list.size == 3) {
+            val day = list[0].toInt()
+            val month = when (list[1]) {
+                "01" -> "января"
+                "02" -> "февраля"
+                "03" -> "марта"
+                "04" -> "апреля"
+                "05" -> "мая"
+                "06" -> "июня"
+                "07" -> "июля"
+                "08" -> "августа"
+                "09" -> "сентября"
+                "10" -> "октября"
+                "11" -> "ноября"
+                "12" -> "декабря"
+                else -> throw Exception("неверный формат месяца")
+            }
+            return String.format("%d %s %s", day, month, list[2])
+        }
+        else throw Exception("неверный формат")
+    }
+    catch(x: Exception){
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -89,7 +145,24 @@ fun dateDigitToStr(digital: String): String = TODO()
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String{
+    try {
+        val s = StringBuilder("")
+        for (ch in phone) {
+            // не обрабатываем символ, если попадается скобка или черточка
+            if (ch != ' ' && ch != '-' && ch != '(' && ch != ')'){
+                // если не цифра и не плюс, то неверный формат
+                if ((ch !in '0'..'9') && (ch != '+')){
+                    throw Exception("неверный формат")
+                }else s.append(ch)
+            }
+        }
+        return s.toString()
+    }
+    catch (x: Exception){
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -101,7 +174,29 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int{
+    val templist = jumps.split(" ")
+    val list = mutableListOf<Int>()
+    for (elem in templist){
+        try{
+            list.add(elem.toInt())
+        }  /* если не преобразовалось в Int, проверяем, содержит ли строка
+              корректные символы. если корректные - обрабатываем некст строку */
+        catch (e: NumberFormatException){
+            if (elem == "%" || elem == "-") continue
+            else return -1
+        }
+    }
+    if (list.isNotEmpty()){
+        var max = list[0]
+        for (i in 1 until list.size){
+            if (list[i]>max)
+                max = list[i]
+        }
+        return max
+    }
+    else return -1
+}
 
 /**
  * Сложная
