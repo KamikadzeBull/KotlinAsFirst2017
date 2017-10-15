@@ -83,7 +83,7 @@ fun dateStrToDigit(str: String): String{
                 "июля" -> 7
                 "августа" -> 8
                 "сентября" -> 9
-                "откября" -> 10
+                "октября" -> 10
                 "ноября" -> 11
                 "декабря" -> 12
                 else -> throw Exception("месяц неверного формата")
@@ -183,7 +183,7 @@ fun bestLongJump(jumps: String): Int{
         }  /* если не преобразовалось в Int, проверяем, содержит ли строка
               корректные символы. если корректные - обрабатываем некст строку */
         catch (e: NumberFormatException){
-            if (elem == "%" || elem == "-" || elem == " ") continue
+            if (elem == "%" || elem == "-" || elem == "") continue
             else return -1
         }
     }
