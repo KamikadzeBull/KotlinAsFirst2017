@@ -88,7 +88,7 @@ fun dateStrToDigit(str: String): String{
                 "декабря" -> 12
                 else -> throw Exception("месяц неверного формата")
             }
-            return String.format("%02d.%02d.%s", day, month, list[2])
+            return "${twoDigitStr(day)}.${twoDigitStr(month)}.${list[2].toInt()}"
         }
         else throw Exception("неверный формат")
     }
@@ -183,7 +183,7 @@ fun bestLongJump(jumps: String): Int{
         }  /* если не преобразовалось в Int, проверяем, содержит ли строка
               корректные символы. если корректные - обрабатываем некст строку */
         catch (e: NumberFormatException){
-            if (elem == "%" || elem == "-") continue
+            if (elem == "%" || elem == "-" || elem == " ") continue
             else return -1
         }
     }
