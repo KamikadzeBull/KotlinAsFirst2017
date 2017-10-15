@@ -92,20 +92,13 @@ fun fib(n: Int): Int{
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int{
-    if(isCoPrime(m,n)) {
-        return m*n
+    var x = m
+    var y = n
+    while (x!=y){
+        if (x>y) y += n
+        else x += m
     }
-    else{
-        var y = if (m>n) m else n
-        y = if (isPrime(y)) 1 else minDivisor(y)
-        /* прибавляем к четному минимальный делитель большего числа
-           до тех пор, пока не получится наименьшее общее кратное */
-        var x = if (m%2 == 0) m else n
-        while ((x%m != 0)||(x%n != 0)) {
-            x += y
-        }
-        return x
-    }
+    return x
 }
 
 /**
