@@ -81,6 +81,7 @@ fun digitNumber(n: Int): Int{
 fun fib(n: Int): Int{
     val a = (1 + sqrt(5.0))/2
     val b = (1 - sqrt(5.0))/2
+    // по формуле Бине:
     return ((pow(a, n.toDouble()) - pow(b, n.toDouble())) / sqrt(5.0)).toInt()
 }
 
@@ -91,15 +92,20 @@ fun fib(n: Int): Int{
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int{
-    var c = 0
-    val x = if (m>n) m else n
-    for (i in x..m*n){
-        if ((i%m == 0)&&(i%n == 0)){
-            c = i
-            break
-        }
+    if(isCoPrime(m,n)) {
+        return m*n
     }
-    return c
+    else{
+        var x = if (m>n) m else n
+        var y = if (m>n) n else m
+        y = if (isPrime(y)) 1 else minDivisor(y)
+        /* прибавляем к большему минимальный делитель минимального числа
+           до тех пор, пока не получится наименьшее общее кратное */
+        while ((x%m != 0)||(x%n != 0)) {
+            x += y
+        }
+        return x
+    }
 }
 
 /**
@@ -108,14 +114,17 @@ fun lcm(m: Int, n: Int): Int{
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int{
-    var a = 0
-    for (i in 2..n){
-        if (n%i==0){
-            a = i
-            break
+    if (isPrime(n)) return n
+    else{
+        var a = 0
+        for (i in 2..n) {
+            if (n % i == 0) {
+                a = i
+                break
+            }
         }
+        return a
     }
-    return a
 }
 
 /**
@@ -124,14 +133,17 @@ fun minDivisor(n: Int): Int{
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int{
-    var a = 0
-    for (i in (n-1)downTo 1){
-        if (n%i==0){
-            a = i
-            break
+    if (isPrime(n)) return 1
+    else{
+        var a = 0
+        for (i in (n - 1) downTo 1) {
+            if (n % i == 0) {
+                a = i
+                break
+            }
         }
+        return a
     }
-    return a
 }
 
 /**
@@ -142,6 +154,7 @@ fun maxDivisor(n: Int): Int{
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean{
+    // алгоритм Евклида
     var a = m
     var b = n
     while(a!=b){
