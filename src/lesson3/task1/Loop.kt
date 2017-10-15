@@ -96,10 +96,10 @@ fun lcm(m: Int, n: Int): Int{
         return m*n
     }
     else{
-        var x = if (m>n) m else n
-        var y = if (m>n) n else m
+        var x = if (m>n) n else m
+        var y = if (m>n) m else n
         y = if (isPrime(y)) 1 else minDivisor(y)
-        /* прибавляем к большему минимальный делитель минимального числа
+        /* прибавляем к меньшему минимальный делитель большего числа
            до тех пор, пока не получится наименьшее общее кратное */
         while ((x%m != 0)||(x%n != 0)) {
             x += y
