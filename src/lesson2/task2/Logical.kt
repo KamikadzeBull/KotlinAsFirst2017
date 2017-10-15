@@ -42,9 +42,15 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val i = a <= r;     val j = b <= s
-    val m = a <= s;     val n = b <= r
-              val x = c <= s
-              val y = c <= r
-    return (i && j) || (m && n) || (i && x) || (m && y) || (n && x) || (j && y)
+    /* следующие константы отражают, может ли одна из сторон кирпича
+       пройти через по одной из сторон отверстия */
+    val i = a <= r
+    val j = b <= s
+    val m = a <= s
+    val n = b <= r
+    val x = c <= s
+    val y = c <= r
+    // достаточно, чтобы кирпич проходил по двум сторонам отверстия
+    return (i && j) || (m && n) || (i && x)
+        || (m && y) || (n && x) || (j && y)
 }
