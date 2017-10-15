@@ -66,9 +66,11 @@ fun timeForHalfWay(t1: Double, v1: Double,
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int{
-    if (((kingX==rookX1)||(kingY==rookY1))&&((kingX==rookX2)||(kingY==rookY2))) return 3
-    else if ((kingX==rookX1)||(kingY==rookY1)) return 1
-         else if ((kingX==rookX2)||(kingY==rookY2)) return 2
+    val x = (kingX==rookX1)||(kingY==rookY1) // может бить первая ладья
+    val y = (kingX==rookX2)||(kingY==rookY2) // может бить вторая ладья
+    if (x && y) return 3
+    else if (x) return 1
+         else if (y) return 2
               else return 0
 }
 
@@ -83,9 +85,11 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int{
-    if (((kingX==rookX)||(kingY==rookY))&&(abs(kingX-bishopX)==abs(kingY-bishopY))) return 3
-    else if ((kingX==rookX)||(kingY==rookY)) return 1
-         else if (abs(kingX-bishopX)==abs(kingY-bishopY)) return 2
+    val x = (kingX==rookX)||(kingY==rookY) // может бить ладья
+    val y = abs(kingX-bishopX)==abs(kingY-bishopY) // может бить слон
+    if (x && y) return 3
+    else if (x) return 1
+         else if (y) return 2
               else return 0
 }
 
@@ -97,7 +101,7 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int{
     val i: Double; val j: Double; val k: Double
-    if ((a+b>c)&&(a+c>b)&&(b+c>a)){
+    if ((a+b>c)&&(a+c>b)&&(b+c>a)){ // условие существования треугольника
         /* самую большую сторону и присваиваем ее I
            остальные присваиваем двум другим переменным */
         if ((a>=b)&&(a>=c)){
@@ -108,6 +112,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
         }
         else {i = c; j = a; k = b}
 
+        /* проверяем по теореме пифагора */
         if (sqr(j)+sqr(k)< sqr(i)) return 2
         else if (sqr(j)+sqr(k)> sqr(i)) return 0
              else return 1
@@ -124,12 +129,16 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int{
     val i = c in a..b
     val j = a in c..d
+    /* описуемое лишь графически множество вариантов взаимного
+       расположения точек в итоге заключается в следующие условия */
     return when {
         i && (d in a..b) -> d - c
         j && (b in c..d) -> b - a
         i && (d > b) -> b - c
         j && (b > d) -> d - a
-        ((a == b) && (b == c) && (c == d))  ||  ((c in a..d) && (b == c))  ||  ((a in c..b) && (d == a)) -> 0
+        ((a == b) && (b == c) && (c == d))
+            ||  ((c in a..d) && (b == c))
+            ||  ((a in c..b) && (d == a)) -> 0
         else -> -1
     }
 }
