@@ -60,7 +60,6 @@ fun main(args: Array<String>) {
         println("Достигнут <конец файла> в процессе чтения строки. Программа прервана")
     }
     */
-    println(firstDuplicateIndex("Яблоко упало на ветку с ветки оно упало на на землю"))
 }
 
 /**
@@ -221,7 +220,7 @@ fun bestHighJump(jumps: String): Int{
             a = list[i-1].toInt()
             for (ch in list[i]){
                 if ((ch=='+')||(ch=='-')||ch=='%'){
-                    if (ch=='+'){
+                    if ((ch=='+')&&(a>max)){
                         max = a
                         break
                     }
