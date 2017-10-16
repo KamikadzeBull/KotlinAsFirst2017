@@ -308,7 +308,38 @@ fun firstDuplicateIndex(str: String): Int{
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть положительными
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String{
+    try {
+        val listMain = description.split("; ") // список связок наименование-цена
+        val listName = mutableListOf<String>() // список наименований
+        val listCost = mutableListOf<Double>() // список цен
+
+        /* проверка на верность формата ввода, заполнение списков */
+        for (str in listMain) {
+            val list = str.split(" ")
+            listName.add(list[0])
+            var dot = false // наличие точки в цене
+            for (ch in list[1])
+                if ((ch !in '0'..'9') && (ch != '.'))
+                    throw Exception("неверный формат цены")
+                else if (ch == '.') dot = true
+            if (dot) listCost.add(list[1].toDouble())
+        }
+        /* проверка на прямое соответствие индексов списков наименований и цен,
+           далее поиск наименования продукта с самой большой ценой */
+        if ((listName.isNotEmpty()) && (listCost.isNotEmpty())
+           && ((listCost.size + listName.size)%2 == 0 )){
+            var max = 0
+            for (i in 1 until listCost.size)
+                if (listCost[i]>listCost[max]) max = i
+            return listName[max]
+        }
+        else throw Exception("нет прямого соответствия между наименованием и ценой либо строка пуста")
+    }
+    catch (x: Exception) {
+        return ""
+    }
+}
 
 /**
  * Сложная
