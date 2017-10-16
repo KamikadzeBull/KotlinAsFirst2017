@@ -213,7 +213,7 @@ fun bestLongJump(jumps: String): Int{
  */
 fun bestHighJump(jumps: String): Int{
     try{
-        var max = 0
+        var max = -1
         val list = jumps.split(" ")
         var a = list[0].toInt()       /* излишне, т.к. переприсваевается в цикле, но этим
             toInt() точно можно проверить корректность ввода, например, при строке "???" */
