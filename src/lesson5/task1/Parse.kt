@@ -44,6 +44,7 @@ fun timeSecondsToStr(seconds: Int): String {
  * Пример: консольный ввод
  */
 fun main(args: Array<String>) {
+    /*
     println("Введите время в формате ЧЧ:ММ:СС")
     val line = readLine()
     if (line != null) {
@@ -58,6 +59,8 @@ fun main(args: Array<String>) {
     else {
         println("Достигнут <конец файла> в процессе чтения строки. Программа прервана")
     }
+    */
+    println(firstDuplicateIndex("Яблоко упало на ветку с ветки оно упало на на землю"))
 }
 
 /**
@@ -208,7 +211,31 @@ fun bestLongJump(jumps: String): Int{
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int{
+    try{
+        var max = 0
+        val list = jumps.split(" ")
+        var a = list[0].toInt()       /* излишне, т.к. переприсваевается в цикле, но этим
+            toInt() точно можно проверить корректность ввода, например, при строке "???" */
+        for (i in 1 until list.size step 2){
+            a = list[i-1].toInt()
+            if (a<=max) throw Exception("высота не возросла или вообще отрицательна")
+            for (ch in list[i]){
+                if ((ch=='+')||(ch=='-')||ch=='%'){
+                    if (ch=='+'){
+                        max = a
+                        break
+                    }
+                }
+                else throw Exception("встречен недопустимый символ")
+            }
+        }
+        return max
+    }
+    catch (x: Exception){
+        return -1
+    }
+}
 
 /**
  * Сложная
@@ -251,7 +278,29 @@ fun plusMinus(expression: String): Int{
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int{
+    val list = str.toLowerCase().split(" ") // список слов
+    val listIndex = mutableListOf<Int>() // список индексов первых букв
+    var firstIndex = -1
+    // прямое соответствие между списком слов и списком индексов
+    for (i in 0 until str.length){
+        if (firstIndex == -1) firstIndex = i
+        if (i == str.length) listIndex.add(firstIndex)
+        if (str[i] == ' ')
+        {
+            listIndex.add(firstIndex)
+            firstIndex = -1
+        }
+    }
+    for (i in 0 until list.size){
+        for (j in i+1 until list.size){
+            if (list[i] == list[j]){
+                return listIndex[i]
+            }
+        }
+    }
+    return -1
+}
 
 /**
  * Сложная
