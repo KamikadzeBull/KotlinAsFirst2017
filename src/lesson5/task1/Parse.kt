@@ -292,12 +292,9 @@ fun firstDuplicateIndex(str: String): Int{
             firstIndex = -1
         }
     }
-    for (i in 0 until list.size){
-        for (j in i+1 until list.size){
-            if (list[i] == list[j]){
-                return listIndex[i]
-            }
-        }
+    for (i in 1 until list.size) {
+        if (list[i] == list[i - 1])
+            return listIndex[i-1]
     }
     return -1
 }
