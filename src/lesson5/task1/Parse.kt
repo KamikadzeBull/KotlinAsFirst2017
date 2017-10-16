@@ -219,7 +219,6 @@ fun bestHighJump(jumps: String): Int{
             toInt() точно можно проверить корректность ввода, например, при строке "???" */
         for (i in 1 until list.size step 2){
             a = list[i-1].toInt()
-            if (a<=max) throw Exception("высота не возросла или вообще отрицательна")
             for (ch in list[i]){
                 if ((ch=='+')||(ch=='-')||ch=='%'){
                     if (ch=='+'){
