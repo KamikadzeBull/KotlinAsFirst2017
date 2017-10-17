@@ -118,7 +118,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int{
         }
         else {
             i = c
-            j = a;
+            j = a
             k = b
         }
 
