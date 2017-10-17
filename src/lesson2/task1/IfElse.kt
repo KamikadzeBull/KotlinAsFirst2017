@@ -100,17 +100,27 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int{
-    val i: Double; val j: Double; val k: Double
+    val i: Double
+    val j: Double
+    val k: Double
     if ((a+b>c)&&(a+c>b)&&(b+c>a)){ // условие существования треугольника
         /* самую большую сторону и присваиваем ее I
            остальные присваиваем двум другим переменным */
         if ((a>=b)&&(a>=c)){
-            i = a; j = b; k = c
+            i = a
+            j = b
+            k = c
         }
         else if ((b>=a)&&(b>=c)){
-            i = b; j = a; k = c
+            i = b
+            j = a
+            k = c
         }
-        else {i = c; j = a; k = b}
+        else {
+            i = c
+            j = a;
+            k = b
+        }
 
         /* проверяем по теореме пифагора */
         if (sqr(j)+sqr(k)< sqr(i)) return 2
