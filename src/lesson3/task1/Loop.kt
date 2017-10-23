@@ -94,6 +94,8 @@ fun fib(n: Int): Int{
 fun lcm(m: Int, n: Int): Int{
     var x = m
     var y = n
+    /* прибавляем к меньшему изменяемому соответствующее исходное
+       значение до тех пор, пока измененные между собой не сравняются */
     while (x!=y){
         if (x>y) y += n
         else x += m
@@ -153,18 +155,9 @@ fun isCoPrime(m: Int, n: Int): Boolean{
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean{
-    var a = -1.0
-    var i = m.toDouble()
-    do{
-        if (sqrt(i).rem(1) == 0.0){
-            a = i
-            break
-        }
-        i++
-    }while(i<=n)
-    return (a!=-1.0)
-}
+private fun sqr(n: Int) = n*n
+fun squareBetweenExists(m: Int, n: Int): Boolean =
+        sqr(sqrt(n.toDouble()).toInt()) in m..n
 
 /**
  * Средняя
@@ -175,8 +168,9 @@ fun squareBetweenExists(m: Int, n: Int): Boolean{
  */
 fun sin(x: Double, eps: Double): Double{
     var x0 = x
-    while (abs(x0)>2*Math.PI){
-        if (x0 < 0) x0 += 2*Math.PI else x0 -= 2*Math.PI
+    /* для корректности внесем значение в диапазон [-2п; 2п] */
+    while (abs(x0)>2*PI){
+        if (x0 < 0) x0 += 2*PI else x0 -= 2*PI
     }
     var a = x0
     var b = x0
@@ -201,8 +195,8 @@ fun cos(x: Double, eps: Double): Double{
     var b = a
     var x0 = x
     var i = 0
-    while (abs(x0)>2*Math.PI){
-        if (x0 < 0) x0 += 2*Math.PI else x0 -= 2*Math.PI
+    while (abs(x0)>2*PI){
+        if (x0 < 0) x0 += 2*PI else x0 -= 2*PI
     }
     while (abs(b) >= eps){
         i++
@@ -221,6 +215,7 @@ fun cos(x: Double, eps: Double): Double{
 fun revert(n: Int): Int{
     var a = n
     var b = 0
+    /* по циферке берем с конца исходного, добавляем к новому */
     do{
         b = b * 10 + a%10
         a /= 10
@@ -264,16 +259,24 @@ fun hasDifferentDigits(n: Int): Boolean{
 fun squareSequenceDigit(n: Int): Int{
     var sL = 0
     var i = 0
-    var j: Int
+    /* число не составляется полностью, записывается его потенциальная длина
+       при достижении определенного квадрата, запоминается текущее число,
+       из которого должен быть составлен квадрат */
     while (sL<n){
         i++
         sL += "${i*i}".length
     }
+    /* если потенциальная длина равна номеру цифры, то от квадрата текущего
+       числа лишь берется последняя его цифра */
     if (sL == n){
         return (i*i)%10
     }
+    /* если потенциальная длина больше номера цифры, добираемся до нужной циферки
+       квадрата текущего числа делением на 10 таким количеством раз, при котором
+       оно в связке с "мысленными" прошлыми квадратами по длине будет совпадать
+       с запрашиваемым номером цифры, далее берем последнюю цифру от полученного */
     else{
-        j = i*i
+        var j = i*i
         for (k in sL downTo (n+1)){
             j /= 10
         }
@@ -292,34 +295,22 @@ fun fibSequenceDigit(n: Int): Int{
     var s = ""
     var i = 0
     var sL = 0
-    var x1: Int; var x2: Int
 
+    /* подход аналогичен предыдущей задаче, только теперь берем не квадрат*/
     while (sL<n){
         i++
-        if (i <= 2){
-            s = "1"
-        }
-        else{
-            x1 = 1
-            x2 = 1
-            for (j in 3..i){
-                s = "${x1+x2}"
-                x1 = x2
-                x2 = s.toInt()
-            }
-        }
+        s = "${fib(i)}"
         sL += s.length
     }
-
     if (sL == n){
         return (s.toInt())%10
     }
     else{
-        x1 = s.toInt()
+        var x = s.toInt()
         for (j in sL downTo (n+1))
         {
-            x1 /= 10
+            x /= 10
         }
-        return x1%10
+        return x%10
     }
 }
