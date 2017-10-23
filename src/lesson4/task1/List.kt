@@ -3,8 +3,7 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import lesson3.task1.minDivisor
-import java.lang.Math.pow
-import java.lang.Math.sqrt
+import java.lang.Math.*
 
 /**
  * Пример
@@ -122,15 +121,8 @@ fun abs(v: List<Double>): Double{
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double{
-    var s = 0.0
-    return if (list.isNotEmpty()){
-        for (i in list){
-            s += i
-        }
-        s/list.size
-    } else s
-}
+fun mean(list: List<Double>): Double =
+        if (list.isNotEmpty()) list.sum()/list.size else 0.0
 
 /**
  * Средняя
@@ -141,17 +133,12 @@ fun mean(list: List<Double>): Double{
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    var s = 0.0
-    return if (list.isEmpty()) list
-    else{
-        for (i in list){
-            s += i
-        }
-        for (i in 0 until list.size){
-            list[i] -= s/list.size
-        }
-        list
+    if (list.isNotEmpty()){
+        val av = mean(list)
+        for (i in 0 until list.size)
+            list[i] -= av
     }
+    return list
 }
 
 /**
@@ -163,10 +150,8 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Double>, b: List<Double>): Double{
     var c = 0.0
-    if (a.isNotEmpty()){
-        for (i in 0 until a.size){
-            c += a[i]*b[i]
-        }
+    for (i in 0 until a.size){
+        c += a[i]*b[i]
     }
     return c
 }
@@ -202,10 +187,8 @@ fun polynom(p: List<Double>, x: Double): Double{
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double>{
     if (list.isNotEmpty()){
-        var s = list[0]
-        for (i in 1 until list.size){
-            s += list[i]
-            list[i] = s
+        for (i in list.size-1 downTo 1){
+            list[i] = list.subList(0,i+1).sum()
         }
     }
     return list
@@ -268,15 +251,16 @@ fun convert(n: Int, base: Int): List<Int>{
  */
 fun convertToString(n: Int, base: Int): String{
     val list = convert(n, base)
-    var s = ""
+    val s = StringBuilder("")
     for (x in list){
         when (x) {
-            in 0..9 -> s += x.toString()
-            else    -> s += (x+87).toChar()
+            in 0..9 -> s.append(x.toString())
+            else    -> s.append(convertIntToChar(x))
         }
     }
-    return s
+    return s.toString()
 }
+fun convertIntToChar(n: Int): Char = (n+87).toChar()
 
 /**
  * Средняя
@@ -325,64 +309,18 @@ fun decimalFromString(str: String, base: Int): Int{
  */
 fun roman(n: Int): String{
     var a = n
-    var s = ""
+    val s = StringBuilder("")
+    val listD = listOf<Int>(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    val listS = listOf<String>("M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I")
     while (a>0) {
-        when {
-            a >= 1000 -> {
-                s += "M"
-                a -= 1000
+        for (i in 0 until listD.size)
+            if (a >= listD[i]) {
+                s.append(listS[i])
+                a -= listD[i]
+                break
             }
-            a >= 900 -> {
-                s += "CM"
-                a -= 900
-            }
-            a >= 500 -> {
-                s += "D"
-                a -= 500
-            }
-            a >= 400 -> {
-                s += "CD"
-                a -= 400
-            }
-            a >= 100 -> {
-                s += "C"
-                a -= 100
-            }
-            a >= 90 -> {
-                s += "XC"
-                a -= 90
-            }
-            a >= 50 -> {
-                s += "L"
-                a -= 50
-            }
-            a >= 40 -> {
-                s += "XL"
-                a -= 40
-            }
-            a >= 10 -> {
-                s += "X"
-                a -= 10
-            }
-            a >= 9 -> {
-                s += "IX"
-                a -= 9
-            }
-            a >= 5 -> {
-                s += "V"
-                a -= 5
-            }
-            a >= 4 -> {
-                s += "IV"
-                a -= 4
-            }
-            else -> {
-                s += "I"
-                a -= 1
-            }
-        }
     }
-    return s
+    return s.toString()
 }
 
 /**
@@ -415,25 +353,25 @@ fun russian(n: Int): String{
 
 fun hund(n: Int): String{
     val hund = listOf<String>("", "сто", "двести", "триста", "четыреста", "пятьсот",
-                              "шестьсот", "семьсот", "восемьсот", "девятьсот")
+            "шестьсот", "семьсот", "восемьсот", "девятьсот")
     return hund[n/100]
 }
 
 fun dec(n: Int): String{
     val dec = listOf<String>("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят",
-                             "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
+            "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
     return dec[n/10%10]
 }
 
 fun dig(n: Int): String{
     val dig = listOf<String>("ноль", "один", "два", "три", "четыре",
-                             "пять", "шесть", "семь", "восемь", "девять")
+            "пять", "шесть", "семь", "восемь", "девять")
     return dig[n%10]
 }
 
 fun replDec(x: MutableList<String>): MutableList<String>{
     val dec = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
-                             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
+            "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
     if (x[x.size-2] == "десять"){
         val temp = x[x.size-1]
         x.removeAt(x.size-1)
