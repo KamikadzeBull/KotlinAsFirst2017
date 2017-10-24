@@ -367,7 +367,7 @@ fun russian(n: Int): String {
     if (a2/100 != 0)     s.add(hund[a2/100 -1])     // добавить сотни
     if (a2/10%10 != 0)   s.add(dec[a2/10%10 -1])    // добавить десятки
     if (a2%10 != 0) {       // подобие действий с десятками и единицами тысяч
-        if (s[s.size-1] == dec[0])
+        if ( (s.isNotEmpty()) && (s[s.size-1] == dec[0]) )
             s[s.size-1] = dec10[a2%10 -1]
         else s.add(digit[a2%10 -1])
     }
