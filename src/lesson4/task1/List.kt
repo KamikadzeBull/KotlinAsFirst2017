@@ -109,7 +109,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * Модуль пустого вектора считать равным 0.0.
  */
 fun abs(v: List<Double>): Double{
-    var s = 0.0
+    var s = 0.0 // сумма квадратов эелементов списка
     for (i in v){
         s += i*i
     }
@@ -134,7 +134,7 @@ fun mean(list: List<Double>): Double =
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     if (list.isNotEmpty()){
-        val av = mean(list)
+        val av = mean(list)    // среднее арифметическое элементов
         for (i in 0 until list.size)
             list[i] -= av
     }
@@ -169,6 +169,7 @@ fun polynom(p: List<Double>, x: Double): Double{
     if (p.isNotEmpty()){
         s += p[0]
         for (i in 1 until p.size){
+            // с повышением счетчика повышается показатель степени
             s += p[i]*pow(x,i.toDouble())
         }
     }
@@ -255,12 +256,12 @@ fun convertToString(n: Int, base: Int): String{
     for (x in list){
         when (x) {
             in 0..9 -> s.append(x.toString())
-            else    -> s.append(convertIntToChar(x))
+            else    -> s.append(convertIntToChar(x)) // здесь магии не видно
         }
     }
     return s.toString()
 }
-fun convertIntToChar(n: Int): Char = (n+87).toChar()
+fun convertIntToChar(n: Int): Char = (n+87).toChar() // здесь магия
 
 /**
  * Средняя
@@ -313,6 +314,8 @@ fun roman(n: Int): String{
     val listD = listOf<Int>(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
     val listS = listOf<String>("M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I")
     while (a>0) {
+        // отнимаем самую большую возможную величину из возможных в listD до нуля
+        // listD[i] ~ listS[i]
         for (i in 0 until listD.size)
             if (a >= listD[i]) {
                 s.append(listS[i])
@@ -330,79 +333,43 @@ fun roman(n: Int): String{
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String{
-    // заранее прошу прощения, если вашим глазам стало плохо
-    val list = mutableListOf<String>()
-    val a1 = n/1000
-    val a2 = n%1000
-
-    list.add(hund(a1)) // добавляем строку = сотням тысяч
-    list.add(dec(a1)) // добавляем строку = десяткам тысяч
-    list.add(dig(a1)) // добавляем строку = единицам тысяч
-    replDec(list) // связываем десятки и единицы в нормальное слово
-    removeEmptyAndNull(list) // удаляем пустые строки ради правильности дальнейшей обработки листа
-    if (list.isNotEmpty())
-        thous(list) // в правильной форме связываем готовое число со словом "тысяча"
-    list.add(hund(a2)) // добавляем строку сотен
-    list.add(dec(a2)) // добавляем строку десятков
-    list.add(dig(a2)) // добавляем строку единиц
-    replDec(list) // снова творим дружбу десятков и единиц
-    removeEmptyAndNull(list) // снова удаляем пустые строки
-    return list.joinToString(" ")
-}
-
-fun hund(n: Int): String{
-    val hund = listOf<String>("", "сто", "двести", "триста", "четыреста", "пятьсот",
-            "шестьсот", "семьсот", "восемьсот", "девятьсот")
-    return hund[n/100]
-}
-
-fun dec(n: Int): String{
-    val dec = listOf<String>("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят",
-            "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
-    return dec[n/10%10]
-}
-
-fun dig(n: Int): String{
-    val dig = listOf<String>("ноль", "один", "два", "три", "четыре",
-            "пять", "шесть", "семь", "восемь", "девять")
-    return dig[n%10]
-}
-
-fun replDec(x: MutableList<String>): MutableList<String>{
-    val dec = listOf<String>("десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
+fun russian(n: Int): String {
+    val s = mutableListOf<String>()
+    val a1 = n / 1000
+    val a2 = n % 1000
+    val hund = listOf("сто", "двести", "триста", "четыреста",
+            "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+    val dec = listOf("десять", "двадцать", "тридцать", "сорок",
+            "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
+    val dec10 = listOf("одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать")
-    if (x[x.size-2] == "десять"){
-        val temp = x[x.size-1]
-        x.removeAt(x.size-1)
-        for (i in 0..9){
-            if (temp == dig(i)){
-                x[x.size-1] = dec[i]
-                break
-            }
-        }
-    }
-    return x
-}
+    val digit = listOf("один", "два", "три", "четыре", "пять",
+            "шесть", "семь", "восемь", "девять", "одна", "две")
+    val thous = listOf("тысяча", "тысячи", "тысяч")
 
-fun removeEmptyAndNull(x: MutableList<String>): MutableList<String>{
-    var i = 0
-    do{
-        if ((x[i] == "")||(x[i] == "ноль")){
-            x.removeAt(i)
-        }
-        else i += 1
-    }while(i<x.size)
-    return x
-}
-
-fun thous(x: MutableList<String>): MutableList<String>{
-    x[x.size-1] = when(x[x.size-1]){
-        dig(1) -> "одна тысяча"
-        dig(2) -> "две тысячи"
-        dig(3) -> "три тысячи"
-        dig(4) -> "четыре тысячи"
-        else -> "${x[x.size-1]} тысяч"
+    if (a1/100 != 0)     s.add(hund[a1/100 -1])     // добавить сотни тысяч
+    if (a1/10%10 != 0)   s.add(dec[a1/10%10 -1])    // добавить десятки тысяч
+    /* если десятки тысяч = "десять", посмотреть на единицу тысяч
+       и добавить (заменить на) соответствующее слово */
+    if (a1%10 != 0) {
+        if ( (s.isNotEmpty()) && (s[s.size-1] == dec[0]) )
+            s[s.size-1] = dec10[a1%10 -1]
+        else s.add(digit[a1%10 -1])
     }
-    return x
+    if (a1 != 0)      // добавить слово "тысяча" в нужной форме
+        when (s[s.size-1]){
+            digit[0] -> s[s.size-1] = "${digit[9]} ${thous[0]}"
+            digit[1] -> s[s.size-1] = "${digit[10]} ${thous[1]}"
+            digit[2] -> s[s.size-1] = "${digit[2]} ${thous[1]}"
+            digit[3] -> s[s.size-1] = "${digit[3]} ${thous[1]}"
+            else     -> s.add(thous[2])
+        }
+    if (a2/100 != 0)     s.add(hund[a2/100 -1])     // добавить сотни
+    if (a2/10%10 != 0)   s.add(dec[a2/10%10 -1])    // добавить десятки
+    if (a2%10 != 0) {       // подобие действий с десятками и единицами тысяч
+        if (s[s.size-1] == dec[0])
+            s[s.size-1] = dec10[a2%10 -1]
+        else s.add(digit[a2%10 -1])
+    }
+    return s.joinToString(" ")
 }
