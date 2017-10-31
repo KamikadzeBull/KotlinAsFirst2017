@@ -133,11 +133,9 @@ fun mean(list: List<Double>): Double =
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isNotEmpty()){
-        val av = mean(list)    // среднее арифметическое элементов
-        for (i in 0 until list.size)
-            list[i] -= av
-    }
+    val av = mean(list)    // среднее арифметическое элементов
+    for (i in 0 until list.size)
+        list[i] -= av
     return list
 }
 
@@ -187,11 +185,8 @@ fun polynom(p: List<Double>, x: Double): Double{
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double>{
-    if (list.isNotEmpty()){
-        for (i in list.size-1 downTo 1){
-            list[i] = list.subList(0,i+1).sum()
-        }
-    }
+    for (i in list.size-1 downTo 1)
+        list[i] = list.subList(0,i+1).sum()
     return list
 }
 
@@ -253,15 +248,17 @@ fun convert(n: Int, base: Int): List<Int>{
 fun convertToString(n: Int, base: Int): String{
     val list = convert(n, base)
     val s = StringBuilder("")
-    for (x in list){
+    for (x in list) {
         when (x) {
             in 0..9 -> s.append(x.toString())
-            else    -> s.append(convertIntToChar(x)) // здесь магии не видно
+            else -> {
+                val charNum = 'a'.toInt() + x - 10
+                s.append(charNum.toChar())
+            }
         }
     }
     return s.toString()
 }
-fun convertIntToChar(n: Int): Char = (n+87).toChar() // здесь магия
 
 /**
  * Средняя
@@ -294,7 +291,7 @@ fun decimalFromString(str: String, base: Int): Int{
     for (i in 0 until str.length){
         when {
             str[i] in '0'..'9' -> list.add(str[i].toString().toInt())
-            else               -> list.add(str[i].toInt() - 87)
+            else               -> list.add(str[i].toInt() - 'a'.toInt() + 10)
         }
     }
     return decimal(list, base)
