@@ -75,12 +75,14 @@ val month = listOf<String>("января", "февраля", "марта", "ап
 
 fun dateStrToDigit(str: String): String{
     try {
+        val r = """(\d{1,2}) ([а-я]{3,8}) \d+""".toRegex()
+        if (!r.matches(str))
+            throw Exception("неверный формат месяца")
         val list = str.split(" ")
-        if (list.size != 3) throw Exception("неверный формат строки")
         if (list[1] in month)
             return String.format("%02d.%02d.%d", list[0].toInt(), month.indexOf(list[1])+1, list[2].toInt())
         else
-            throw Exception("неверный формат месяца")
+            throw Exception("месяц не найден")
     }
     catch (e: Exception){
         return ""
@@ -96,8 +98,10 @@ fun dateStrToDigit(str: String): String{
  */
 fun dateDigitToStr(digital: String): String{
     try {
+        val regex = """\d\d.\d\d.(\d+)""".toRegex()
+        if (!regex.matches(digital))
+            throw Exception("неверный формат строки")
         val list = digital.split(".")
-        if (list.size != 3) throw Exception("неверный формат строки")
         return String.format("%d %s %d", list[0].toInt(), month[list[1].toInt()-1], list[2].toInt())
     }
     catch (e: Exception){
@@ -119,19 +123,16 @@ fun dateDigitToStr(digital: String): String{
  */
 fun flattenPhoneNumber(phone: String): String{
     try {
-        val s = StringBuilder("")
-        for (ch in phone) {
-            // не обрабатываем символ, если попадается скобка или черточка
-            if (ch != ' ' && ch != '-' && ch != '(' && ch != ')'){
-                // если не цифра и не плюс, то неверный формат
-                if ((ch !in '0'..'9') && (ch != '+'))
-                    throw Exception("неверный формат")
-                else s.append(ch)
-            }
-        }
-        return s.toString()
+        val regex = """^(\+?)((\d)*|(\s)*|(\()*|(\))*|-*)*""".toRegex()
+        if (!regex.matches(phone))
+            throw Exception("неверный формат номера")
+        val flattenPhone = StringBuilder("")
+        for (ch in phone)
+            if ((ch !in '0'..'9')&&(ch != '+')) continue
+            else flattenPhone.append(ch)
+        return flattenPhone.toString()
     }
-    catch (x: Exception){
+    catch (e: Exception){
         return ""
     }
 }
