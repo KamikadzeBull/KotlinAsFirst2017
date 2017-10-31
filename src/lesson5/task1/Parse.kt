@@ -70,31 +70,19 @@ fun main(args: Array<String>) {
  * День и месяц всегда представлять двумя цифрами, например: 03.04.2011.
  * При неверном формате входной строки вернуть пустую строку
  */
+val month = listOf<String>("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+        "августа", "сентября", "октября", "ноября", "декабря")
+
 fun dateStrToDigit(str: String): String{
-    try{
+    try {
         val list = str.split(" ")
-        if (list.size == 3) {
-            val day = list[0].toInt()
-            val month = when (list[1]) {
-                "января" -> 1
-                "февраля" -> 2
-                "марта" -> 3
-                "апреля" -> 4
-                "мая" -> 5
-                "июня" -> 6
-                "июля" -> 7
-                "августа" -> 8
-                "сентября" -> 9
-                "октября" -> 10
-                "ноября" -> 11
-                "декабря" -> 12
-                else -> throw Exception("месяц неверного формата")
-            }
-            return "${twoDigitStr(day)}.${twoDigitStr(month)}.${list[2].toInt()}"
-        }
-        else throw Exception("неверный формат")
+        if (list.size != 3) throw Exception("неверный формат строки")
+        if (list[1] in month)
+            return String.format("%02d.%02d.%d", list[0].toInt(), month.indexOf(list[1])+1, list[2].toInt())
+        else
+            throw Exception("неверный формат месяца")
     }
-    catch(e: Exception){
+    catch (e: Exception){
         return ""
     }
 }
@@ -107,30 +95,12 @@ fun dateStrToDigit(str: String): String{
  * При неверном формате входной строки вернуть пустую строку
  */
 fun dateDigitToStr(digital: String): String{
-    try{
+    try {
         val list = digital.split(".")
-        if (list.size == 3) {
-            val day = list[0].toInt()
-            val month = when (list[1]) {
-                "01" -> "января"
-                "02" -> "февраля"
-                "03" -> "марта"
-                "04" -> "апреля"
-                "05" -> "мая"
-                "06" -> "июня"
-                "07" -> "июля"
-                "08" -> "августа"
-                "09" -> "сентября"
-                "10" -> "октября"
-                "11" -> "ноября"
-                "12" -> "декабря"
-                else -> throw Exception("неверный формат месяца")
-            }
-            return String.format("%d %s %s", day, month, list[2])
-        }
-        else throw Exception("неверный формат")
+        if (list.size != 3) throw Exception("неверный формат строки")
+        return String.format("%d %s %d", list[0].toInt(), month[list[1].toInt()-1], list[2].toInt())
     }
-    catch(x: Exception){
+    catch (e: Exception){
         return ""
     }
 }
@@ -154,9 +124,9 @@ fun flattenPhoneNumber(phone: String): String{
             // не обрабатываем символ, если попадается скобка или черточка
             if (ch != ' ' && ch != '-' && ch != '(' && ch != ')'){
                 // если не цифра и не плюс, то неверный формат
-                if ((ch !in '0'..'9') && (ch != '+')){
+                if ((ch !in '0'..'9') && (ch != '+'))
                     throw Exception("неверный формат")
-                }else s.append(ch)
+                else s.append(ch)
             }
         }
         return s.toString()
@@ -177,9 +147,9 @@ fun flattenPhoneNumber(phone: String): String{
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int{
-    val templist = jumps.split(" ")
+    val tempList = jumps.split(" ")
     val list = mutableListOf<Int>()
-    for (elem in templist){
+    for (elem in tempList){
         try{
             list.add(elem.toInt())
         }  /* если не преобразовалось в Int, проверяем, содержит ли строка
