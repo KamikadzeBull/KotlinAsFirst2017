@@ -269,11 +269,11 @@ fun mostExpensive(description: String): String{
         if (!description.matches(regex1))
             throw Exception("неверный формат строки")
         val expressions = description.split("; "," ")
-        val costs = mutableListOf<Double>()
-        for (i in 1 until expressions.size step 2)
-            costs.add(expressions[i].toDouble())
-        val max = costs.max()?: 0
-        return expressions[expressions.indexOf(max.toString())-1]
+        var max = 1
+        for (i in 3 until expressions.size step 2)
+            if (expressions[i].toDouble() > expressions[max].toDouble())
+                max = i
+        return expressions[max-1]
     }
     catch(e: Exception){
         return ""
