@@ -70,17 +70,17 @@ fun main(args: Array<String>) {
  * День и месяц всегда представлять двумя цифрами, например: 03.04.2011.
  * При неверном формате входной строки вернуть пустую строку
  */
-val month = listOf<String>("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+val MONTH = listOf<String>("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
         "августа", "сентября", "октября", "ноября", "декабря")
 
 fun dateStrToDigit(str: String): String{
     try {
-        val r = """(\d{1,2}) ([а-я]{3,8}) \d+""".toRegex()
-        if (!r.matches(str))
+        val regex = """(\d{1,2}) ([а-я]{3,8}) \d+""".toRegex()
+        if (!str.matches(regex))
             throw Exception("неверный формат месяца")
         val list = str.split(" ")
-        if (list[1] in month)
-            return String.format("%02d.%02d.%d", list[0].toInt(), month.indexOf(list[1])+1, list[2].toInt())
+        if (list[1] in MONTH)
+            return String.format("%02d.%02d.%d", list[0].toInt(), MONTH.indexOf(list[1])+1, list[2].toInt())
         else
             throw Exception("месяц не найден")
     }
@@ -99,10 +99,10 @@ fun dateStrToDigit(str: String): String{
 fun dateDigitToStr(digital: String): String{
     try {
         val regex = """\d\d.\d\d.(\d+)""".toRegex()
-        if (!regex.matches(digital))
+        if (!digital.matches(regex))
             throw Exception("неверный формат строки")
         val list = digital.split(".")
-        return String.format("%d %s %d", list[0].toInt(), month[list[1].toInt()-1], list[2].toInt())
+        return String.format("%d %s %d", list[0].toInt(), MONTH[list[1].toInt()-1], list[2].toInt())
     }
     catch (e: Exception){
         return ""
@@ -123,14 +123,11 @@ fun dateDigitToStr(digital: String): String{
  */
 fun flattenPhoneNumber(phone: String): String{
     try {
-        val regex = """^(\+?)((\d)*|(\s)*|(\()*|(\))*|-*)*""".toRegex()
-        if (!regex.matches(phone))
+        val regex = """((\+?)|(\(?)|(\)?)|(-*)|(\s*)|(\d+))*""".toRegex()
+        if (!phone.matches(regex))
             throw Exception("неверный формат номера")
-        val flattenPhone = StringBuilder("")
-        for (ch in phone)
-            if ((ch !in '0'..'9')&&(ch != '+')) continue
-            else flattenPhone.append(ch)
-        return flattenPhone.toString()
+        val symbols = phone.split(" ","(",")","-")
+        return symbols.joinToString("")
     }
     catch (e: Exception){
         return ""
@@ -148,27 +145,23 @@ fun flattenPhoneNumber(phone: String): String{
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int{
-    val tempList = jumps.split(" ")
-    val list = mutableListOf<Int>()
-    for (elem in tempList){
-        try{
-            list.add(elem.toInt())
-        }  /* если не преобразовалось в Int, проверяем, содержит ли строка
-              корректные символы. если корректные - обрабатываем некст строку */
-        catch (e: NumberFormatException){
-            if (elem == "%" || elem == "-" || elem == "") continue
-            else return -1
-        }
+    val regex1 = """(([-%0-9])|(\s))*""".toRegex()
+    val regex2 = """\d+""".toRegex()
+    try{
+        if ((!jumps.matches(regex1))||(!jumps.contains(regex2)))
+            throw Exception("неверный формат строки")
+        val attempts = jumps.split(" ").toMutableList()
+        var i = 0
+        while (i<attempts.size)
+            if (!attempts[i].matches(regex2))
+                attempts.remove(attempts[i])
+            else i++
+        val max = attempts.max()?: "-1"
+        return max.toInt()
     }
-    if (list.isNotEmpty()){
-        var max = list[0]
-        for (i in 1 until list.size){
-            if (list[i]>max)
-                max = list[i]
-        }
-        return max
+    catch (e: Exception){
+        return -1
     }
-    else return -1
 }
 
 /**
@@ -182,26 +175,26 @@ fun bestLongJump(jumps: String): Int{
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int{
+    val regex1 = """(([0-9+%-])|(\s))*""".toRegex()
+    val regex2 = """\d+\s+.*\++""".toRegex()
     try{
-        var max = -1
-        val list = jumps.split(" ")
-        var a = list[0].toInt()       /* излишне, т.к. переприсваевается в цикле, но этим
-            toInt() точно можно проверить корректность ввода, например, при строке "???" */
-        for (i in 1 until list.size step 2){
-            a = list[i-1].toInt()
-            for (ch in list[i]){
-                if ((ch=='+')||(ch=='-')||ch=='%'){
-                    if ((ch=='+')&&(a>max)){
-                        max = a
-                        break
-                    }
-                }
-                else throw Exception("встречен недопустимый символ")
-            }
-        }
-        return max
+        if ((!jumps.matches(regex1))||(!jumps.contains(regex2)))
+            throw Exception("неверный формат строки")
+        val secuence = regex2.findAll(jumps)
+        var attempts = mutableListOf<String>()
+        for (str in secuence)
+            attempts.add(str.value) // комбинации удачных попыток, вычлененных регексом
+        val tempStr = attempts.joinToString("")  //  объединяем в строку
+        attempts = tempStr.split(" ").toMutableList()  // чтобы перевести их в лист высот и символов
+        var i = 0
+        while (i<attempts.size)
+            if (!attempts[i].matches(Regex("""\d+""")))
+                attempts.remove(attempts[i])  // а затем оставить лишь высоты
+            else i++
+        val max = attempts.max()?: "-1"
+        return max.toInt()
     }
-    catch (x: Exception){
+    catch (e: Exception){
         return -1
     }
 }
@@ -220,19 +213,17 @@ fun plusMinus(expression: String): Int{
     var sum: Int
     try{
         sum = list[0].toInt()
-        var i = 1
+        var i = 2
         while (i < list.size){
-            i++
-            if (i%2 == 0){
-                when (list[i-1]){
-                    "+" -> sum += list[i].toInt()
-                    "-" -> sum -= list[i].toInt()
-                    else -> throw NumberFormatException()
-                }
+            when (list[i-1]){
+                "+" -> sum += list[i].toInt()
+                "-" -> sum -= list[i].toInt()
+                else -> throw Exception()
             }
+            i += 2
         }
     }
-    catch(x: NumberFormatException){
+    catch(e: Exception){
         throw IllegalArgumentException()
     }
     return sum
@@ -248,24 +239,17 @@ fun plusMinus(expression: String): Int{
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int{
-    val list = str.toLowerCase().split(" ") // список слов
-    val listIndex = mutableListOf<Int>() // список индексов первых букв
-    var firstIndex = -1
-    // прямое соответствие между списком слов и списком индексов
-    for (i in 0 until str.length){
-        if (firstIndex == -1) firstIndex = i
-        if (i == str.length) listIndex.add(firstIndex)
-        if (str[i] == ' ')
-        {
-            listIndex.add(firstIndex)
-            firstIndex = -1
-        }
-    }
-    for (i in 1 until list.size) {
-        if (list[i] == list[i - 1])
-            return listIndex[i-1]
-    }
-    return -1
+    val s = str.toLowerCase()
+    val listW = s.split(" ")
+    val listI = mutableListOf<Int>(0)
+    for (i in 1 until s.length)
+        if (s[i]==' ')
+            listI.add(i+1)
+    var index = -1
+    for (i in listI.size-1 downTo 1)
+        if ((listI[i] != listI[i-1])&&(listW[i] == listW[i-1]))
+            index = listI[i-1]
+    return index
 }
 
 /**
@@ -280,34 +264,18 @@ fun firstDuplicateIndex(str: String): Int{
  * Все цены должны быть положительными
  */
 fun mostExpensive(description: String): String{
-    try {
-        val listMain = description.split("; ") // список связок наименование-цена
-        val listName = mutableListOf<String>() // список наименований
-        val listCost = mutableListOf<Double>() // список цен
-
-        /* проверка на верность формата ввода, заполнение списков */
-        for (str in listMain) {
-            val list = str.split(" ")
-            listName.add(list[0])
-            var dot = false // наличие точки в цене
-            for (ch in list[1])
-                if ((ch !in '0'..'9') && (ch != '.'))
-                    throw Exception("неверный формат цены")
-                else if (ch == '.') dot = true
-            if (dot) listCost.add(list[1].toDouble())
-        }
-        /* проверка на прямое соответствие индексов списков наименований и цен,
-           далее поиск наименования продукта с самой большой ценой */
-        if ((listName.isNotEmpty()) && (listCost.isNotEmpty())
-           && ((listCost.size + listName.size)%2 == 0 )){
-            var max = 0
-            for (i in 1 until listCost.size)
-                if (listCost[i]>listCost[max]) max = i
-            return listName[max]
-        }
-        else throw Exception("нет прямого соответствия между наименованием и ценой либо строка пуста")
+    val regex1 = """(.+\s+\d+(.\d*)?(;\s+)?)+""".toRegex()
+    try{
+        if (!description.matches(regex1))
+            throw Exception("неверный формат строки")
+        val expressions = description.split("; "," ")
+        val costs = mutableListOf<Double>()
+        for (i in 1 until expressions.size step 2)
+            costs.add(expressions[i].toDouble())
+        val max = costs.max()?: 0
+        return expressions[expressions.indexOf(max.toString())-1]
     }
-    catch (x: Exception) {
+    catch(e: Exception){
         return ""
     }
 }
@@ -323,7 +291,31 @@ fun mostExpensive(description: String): String{
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int{
+    val rom = listOf('I','V','X','L','C','D','M')
+    val dec = listOf(1,5,10,50,100,500,1000)
+    val regex1 = """[IVXLCDM]+""".toRegex()
+    try{
+        if (!roman.matches(regex1))
+            throw Exception("неверный формат строки")
+        var sum = 0
+        var i = roman.length-1
+        var localSum: Int
+        while (i >= 0) {
+            localSum = dec[rom.indexOf(roman[i])]
+            while ((i >= 1) && (rom.indexOf(roman[i-1]) < rom.indexOf(roman[i]))) {
+                localSum -= dec[rom.indexOf(roman[i-1])]
+                i--
+            }
+            sum += localSum
+            i--
+        }
+        return sum
+    }
+    catch (e: Exception){
+        return -1
+    }
+}
 
 /**
  * Очень сложная
