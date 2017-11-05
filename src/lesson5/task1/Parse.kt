@@ -123,7 +123,7 @@ fun dateDigitToStr(digital: String): String{
  */
 fun flattenPhoneNumber(phone: String): String{
     try {
-        val regex = """((\+?)|(\(?)|(\)?)|(-*)|(\s*)|(\d+))*""".toRegex()
+        val regex = """\+?[\d\s\(\)-]*""".toRegex()
         if ((!phone.matches(regex))||(!phone.contains("\\d+".toRegex())))
             throw Exception("неверный формат номера")
         val symbols = phone.split(" ","(",")","-")
