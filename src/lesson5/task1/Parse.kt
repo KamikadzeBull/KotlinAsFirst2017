@@ -240,7 +240,7 @@ fun firstDuplicateIndex(str: String): Int{
             listI.add(i+1)
     var index = -1
     for (i in listI.size-1 downTo 1)
-        if ((listI[i] != listI[i-1])&&(listW[i] == listW[i-1]))
+        if (listW[i] == listW[i-1])
             index = listI[i-1]
     return index
 }
