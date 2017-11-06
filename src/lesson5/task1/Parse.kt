@@ -174,7 +174,7 @@ fun bestLongJump(jumps: String): Int{
  */
 fun bestHighJump(jumps: String): Int{
     val regex1 = """[0-9+%\s-]*""".toRegex()
-    val regex2 = """\d+\s+.*\++""".toRegex()
+    val regex2 = """^\d+\s+.*\++""".toRegex()
     try{
         if ((!jumps.matches(regex1))||(!jumps.contains(regex2)))
             throw Exception("неверный формат строки")
