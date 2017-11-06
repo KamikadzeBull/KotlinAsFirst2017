@@ -173,7 +173,7 @@ fun bestLongJump(jumps: String): Int{
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int{
-    val regex1 = """(([0-9+%-])|(\s))*""".toRegex()
+    val regex1 = """[0-9+%\s-]*""".toRegex()
     val regex2 = """\d+\s+.*\++""".toRegex()
     try{
         if ((!jumps.matches(regex1))||(!jumps.contains(regex2)))
@@ -184,13 +184,11 @@ fun bestHighJump(jumps: String): Int{
             attempts.add(str.value) // комбинации удачных попыток, вычлененных регексом
         val tempStr = attempts.joinToString("")  //  объединяем в строку
         attempts = tempStr.split(" ").toMutableList()  // чтобы перевести их в лист высот и символов
-        var i = 0
-        while (i<attempts.size)
-            if (!attempts[i].matches(Regex("""\d+""")))
-                attempts.remove(attempts[i])  // а затем оставить лишь высоты
-            else i++
-        val max = attempts.max()?: "-1"
-        return max.toInt()
+        var max = -1
+        for (i in 1 until attempts.size step 2)
+            if ((attempts[i].contains(Regex("\\+"))) && (attempts[i-1].toInt() > max))
+                max = attempts[i-1].toInt()
+        return max
     }
     catch (e: Exception){
         return -1
@@ -211,15 +209,12 @@ fun plusMinus(expression: String): Int{
     var sum: Int
     try{
         sum = list[0].toInt()
-        var i = 2
-        while (i < list.size){
+        for (i in 2 until list.size step 2)
             when (list[i-1]){
                 "+" -> sum += list[i].toInt()
                 "-" -> sum -= list[i].toInt()
                 else -> throw Exception()
             }
-            i += 2
-        }
     }
     catch(e: Exception){
         throw IllegalArgumentException()
