@@ -82,13 +82,29 @@ data class Segment(val begin: Point, val end: Point) {
  *
  * Дано множество точек. Вернуть отрезок, соединяющий две наиболее удалённые из них.
  * Если в множестве менее двух точек, бросить IllegalArgumentException */
-fun diameter(vararg points: Point): Segment = TODO()
+fun diameter(vararg points: Point): Segment{
+    if (points.size < 2)
+        throw IllegalArgumentException("менее двух точек")
+
+    var maxSegment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
+    for (i in 0 until points.size)
+        for (j in i+1 until points.size)
+            if (points[i].distance(points[j]) > maxSegment.begin.distance(maxSegment.end))
+                maxSegment = Segment(points[i], points[j])
+    return maxSegment
+
+}
 
 /* Простая
  *
  * Построить окружность по её диаметру, заданному двумя точками
  * Центр её должен находиться посередине между точками, а радиус составлять половину расстояния между ними */
-fun circleByDiameter(diameter: Segment): Circle = TODO()
+fun circleByDiameter(diameter: Segment): Circle{
+    val center = Point(diameter.begin.x + 0.5*(diameter.end.x - diameter.begin.x),
+                       diameter.end.x + 0.5*(diameter.end.y - diameter.begin.y))
+    val radius = 0.5*(diameter.begin.distance(diameter.end))
+    return Circle(center, radius)
+}
 
 
 
