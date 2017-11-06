@@ -2,6 +2,7 @@
 package lesson6.task1
 
 import lesson1.task1.sqr
+import java.lang.Math.*
 
 // Точка на плоскости
 data class Point(val x: Double, val y: Double) {
@@ -85,7 +86,6 @@ data class Segment(val begin: Point, val end: Point) {
 fun diameter(vararg points: Point): Segment{
     if (points.size < 2)
         throw IllegalArgumentException("менее двух точек")
-
     var maxSegment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
     for (i in 0 until points.size)
         for (j in i+1 until points.size)
@@ -100,8 +100,13 @@ fun diameter(vararg points: Point): Segment{
  * Построить окружность по её диаметру, заданному двумя точками
  * Центр её должен находиться посередине между точками, а радиус составлять половину расстояния между ними */
 fun circleByDiameter(diameter: Segment): Circle{
-    val center = Point(diameter.begin.x + 0.5*(diameter.end.x - diameter.begin.x),
-                       diameter.end.x + 0.5*(diameter.end.y - diameter.begin.y))
+    val x = if (diameter.begin.x < diameter.end.x)
+            diameter.begin.x + 0.5*(diameter.end.x - diameter.begin.x)
+        else diameter.end.x + 0.5*(diameter.begin.x - diameter.end.x)
+    val y = if (diameter.begin.y < diameter.end.y)
+            diameter.begin.y + 0.5*(diameter.end.y - diameter.begin.y)
+        else diameter.end.y + 0.5*(diameter.begin.y - diameter.end.y)
+    val center = Point(x,y)
     val radius = 0.5*(diameter.begin.distance(diameter.end))
     return Circle(center, radius)
 }
@@ -161,7 +166,16 @@ fun bisectorByPoints(a: Point, b: Point): Line = TODO()
  *
  * Задан список из n окружностей на плоскости. Найти пару наименее удалённых из них.
  * Если в списке менее двух окружностей, бросить IllegalArgumentException */
-fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
+fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle>{
+    if (circles.size < 2)
+        throw IllegalArgumentException("менее двух окружностей")
+    var nearest = Pair(circles[0],circles[1])
+    for (i in 0 until circles.size)
+        for (j in i+1 until circles.size)
+            if (circles[i].distance(circles[j]) < nearest.first.distance(nearest.second))
+                nearest = Pair(circles[i], circles[j])
+    return nearest
+}
 
 /* Сложная
  *
