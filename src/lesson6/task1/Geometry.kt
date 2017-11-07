@@ -42,9 +42,6 @@ class Triangle private constructor(private val points: Set<Point>) {
     override fun toString() = "Triangle(a = $a, b = $b, c = $c)"
 }
 
-
-
-
 // Окружность с заданным центром и радиусом
 data class Circle(val center: Point, val radius: Double) {
     /* Простая
@@ -64,9 +61,6 @@ data class Circle(val center: Point, val radius: Double) {
     fun contains(p: Point): Boolean = p.distance(center) <= radius
 }
 
-
-
-
 // Отрезок между двумя точками
 data class Segment(val begin: Point, val end: Point) {
     override fun equals(other: Any?) =
@@ -75,9 +69,6 @@ data class Segment(val begin: Point, val end: Point) {
     override fun hashCode() =
             begin.hashCode() + end.hashCode()
 }
-
-
-
 
 /* Средняя
  *
@@ -100,20 +91,12 @@ fun diameter(vararg points: Point): Segment{
  * Построить окружность по её диаметру, заданному двумя точками
  * Центр её должен находиться посередине между точками, а радиус составлять половину расстояния между ними */
 fun circleByDiameter(diameter: Segment): Circle{
-    val x = if (diameter.begin.x < diameter.end.x)
-            diameter.begin.x + 0.5*(diameter.end.x - diameter.begin.x)
-        else diameter.end.x + 0.5*(diameter.begin.x - diameter.end.x)
-    val y = if (diameter.begin.y < diameter.end.y)
-            diameter.begin.y + 0.5*(diameter.end.y - diameter.begin.y)
-        else diameter.end.y + 0.5*(diameter.begin.y - diameter.end.y)
+    val x = (diameter.begin.x + diameter.end.x) / 2.0
+    val y = (diameter.begin.y + diameter.end.y) / 2.0
     val center = Point(x,y)
-    val radius = 0.5*(diameter.begin.distance(diameter.end))
+    val radius = diameter.begin.distance(diameter.end) / 2.0
     return Circle(center, radius)
 }
-
-
-
-
 
 /* Прямая, заданная точкой point и углом наклона angle (в радианах) по отношению к оси X.
  * Уравнение прямой: (y - point.y) * cos(angle) = (x - point.x) * sin(angle)
@@ -130,7 +113,11 @@ class Line private constructor(val b: Double, val angle: Double) {
      *
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой) */
-    fun crossPoint(other: Line): Point = TODO()
+    fun crossPoint(other: Line): Point{
+        val x = (b / sin(angle) - other.b * cotan(angle) / cos(other.angle)) / (tan(other.angle) * cotan(angle) - 1)
+        val y = (b * tan(other.angle) / sin(angle) - other.b / cos(other.angle)) / (cotan(angle) * tan(other.angle) - 1)
+        return Point(x,y)
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -143,19 +130,29 @@ class Line private constructor(val b: Double, val angle: Double) {
     override fun toString() = "Line(${Math.cos(angle)} * y = ${Math.sin(angle)} * x + $b)"
 }
 
-
-
-
-
 /* Средняя
  *
  * Построить прямую по отрезку */
-fun lineBySegment(s: Segment): Line = TODO()
+fun lineBySegment(s: Segment): Line{
+    val angle: Double
+    when{
+        s.begin.x == s.end.x -> angle = PI/2
+        s.begin.y == s.end.y -> angle = 0.0
+        else -> {
+            val c = Point(s.end.x, s.begin.y)
+            angle = if ((s.begin.x < s.end.x) && (s.begin.y < s.end.y) ||
+                        (s.begin.x > s.end.x) && (s.begin.y < s.end.y))
+                asin((s.end.distance(c)) / (s.begin.distance(s.end)))
+            else PI - asin((s.end.distance(c)) / (s.begin.distance(s.end)))
+        }
+    }
+    return Line(s.begin, angle)
+}
 
 /* Средняя
  *
  * Построить прямую по двум точкам */
-fun lineByPoints(a: Point, b: Point): Line = TODO()
+fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a,b))
 
 /* Сложная
  *
@@ -197,3 +194,4 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
  * соединяющий две самые удалённые точки в данном множестве. */
 fun minContainingCircle(vararg points: Point): Circle = TODO()
 
+fun cotan(n: Double) = 1 / tan(n)
