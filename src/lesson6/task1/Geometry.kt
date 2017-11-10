@@ -126,8 +126,8 @@ class Line private constructor(val b: Double, val angle: Double) {
                 x = (other.b * cos(angle) - b) / sin(angle)
             }
             else -> {
-                x = (b / sin(angle) - other.b * cotan(angle) / cos(other.angle)) / (tan(other.angle) * cotan(angle) - 1)
-                y = (b * tan(other.angle) / sin(angle) - other.b / cos(other.angle)) / (cotan(angle) * tan(other.angle) - 1)
+                x = (other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
+                y = (x * sin(other.angle) + other.b) / cos(other.angle)
             }
         }
         return Point(x,y)
