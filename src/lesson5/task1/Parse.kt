@@ -178,9 +178,9 @@ fun bestHighJump(jumps: String): Int{
     try{
         if ((!jumps.matches(regex1))||(!jumps.contains(regex2)))
             throw Exception("неверный формат строки")
-        val secuence = regex2.findAll(jumps)
+        val sequence = regex2.findAll(jumps)
         var attempts = mutableListOf<String>()
-        for (str in secuence)
+        for (str in sequence)
             attempts.add(str.value) // комбинации удачных попыток, вычлененных регексом
         val tempStr = attempts.joinToString("")  //  объединяем в строку
         attempts = tempStr.split(" ").toMutableList()  // чтобы перевести их в лист высот и символов
