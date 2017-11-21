@@ -1,6 +1,8 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson6.task2
 
+import java.lang.Math.*
+
 /* Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
  * Горизонтали нумеруются снизу вверх, вертикали слева направо. */
@@ -13,14 +15,25 @@ data class Square(val column: Int, val row: Int) {
      * Возвращает строковую нотацию для клетки.
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку */
-    fun notation(): String = TODO()
+    fun notation(): String{
+        return if (this.inside()) {
+            String.format("%c%d", letters[column - 1], row)
+        }
+        else ""
+    }
 }
+
+val letters = listOf<Char>('a','b','c','d','e','f','g','h')
 
 /* Простая
  * Создаёт клетку по строковой нотации.
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException */
-fun square(notation: String): Square = TODO()
+fun square(notation: String): Square{
+    if ((notation[0] !in 'a'..'h') || (notation[1] !in '1'..'8'))
+        throw IllegalArgumentException()
+    else return Square(letters.indexOf(notation[0])+1, notation[1].toString().toInt())
+}
 
 /* Простая
  * Определить число ходов, за которое шахматная ладья пройдёт из клетки start в клетку end.
@@ -41,7 +54,11 @@ fun square(notation: String): Square = TODO()
  * Если любая из клеток некорректна, бросить IllegalArgumentException().
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3). */
-fun rookMoveNumber(start: Square, end: Square): Int = TODO()
+fun rookMoveNumber(start: Square, end: Square): Int = when{
+    start == end -> 0
+    (start.row == end.row) || (start.column == end.column) -> 1
+    else -> 2
+}
 
 /**
  * Средняя
@@ -56,7 +73,11 @@ fun rookMoveNumber(start: Square, end: Square): Int = TODO()
  *          (здесь возможен единственный вариант)
  *          rookTrajectory(Square(3, 5), Square(8, 5)) = listOf(Square(3, 5), Square(8, 5))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них. */
-fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun rookTrajectory(start: Square, end: Square): List<Square> = when (rookMoveNumber(start, end)){
+    0 -> listOf(start)
+    1 -> listOf(start,end)
+    else -> listOf(start, Square(start.column, end.row), end)
+}
 
 /* Простая
  * Определить число ходов, за которое шахматный слон пройдёт из клетки start в клетку end.
@@ -77,7 +98,12 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Если любая из клеток некорректна, бросить IllegalArgumentException().
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7). */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int = when{
+    start == end -> 0
+    abs(start.column - end.column) == abs(start.row - end.row) -> 1
+    ((start.column - end.column) %2 == 0) && ((start.row - end.row) %2 == 0) -> 2
+    else -> -1
+}
 
 /* Сложная
  * Вернуть список из клеток, по которым шахматный слон может быстрее всего попасть из клетки start в клетку end.
@@ -91,7 +117,50 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  *          bishopTrajectory(Square(3, 1), Square(3, 7)) = listOf(Square(3, 1), Square(6, 4), Square(3, 7))
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них. */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square>{
+    when(bishopMoveNumber(start, end)){
+        -1 -> return listOf()
+        0 -> return listOf(start)
+        1 -> return listOf(start,end)
+        else -> {
+            var mid = start
+            /* 6 - количество максимальных "элементарных" передвижений за один ход при известии о том, что нужно
+               сделать два полноценных хода для достижения конечной клетки. если число больше 6, дальше
+               совпадения промежуточной клетки с конечной клеткой по диагоналям не возникнет в любом случае */
+
+            for (i in 1..6){
+                mid = Square(mid.column+1, mid.row+1) // двигаемся по главной диаг. сверху вниз
+                // выясняем, лежит ли на побочной диагонали с конечной клеткой
+                if ((mid.column - end.column == end.row - mid.row)&&(mid.inside())) {
+                    return listOf(start,mid,end)
+                }
+            }
+            mid = start
+            for (i in 1..6){
+                mid = Square(mid.column-1, mid.row-1) // двигаемся по главной диаг. снизу вверх
+                // выясняем, лежит ли на побочной диагонали с конечной клеткой
+                if ((mid.column - end.column == end.row - mid.row)&&(mid.inside())) {
+                    return listOf(start,mid,end)
+                }
+            }
+            mid = start
+            for (i in 1..6){
+                mid = Square(mid.column-1, mid.row+1) // двигаемся по побочной диаг. сверху вниз
+                // выясняем, лежит ли на главной диагонали с конечной клеткой
+                if ((mid.column - end.column == mid.row - end.row)&&(mid.inside())){
+                    return listOf(start,mid,end)
+                }
+            }
+            mid = start
+            for (i in 1..6){
+                // выясняем, лежит ли на главной диагонали с конечной клеткой
+                while ((mid.column - end.column != mid.row - end.row)&&(mid.inside()))
+                    mid = Square(mid.column+1, mid.row-1) // двигаемся по побочной диаг. снизу вверх
+            }
+            return listOf(start,mid,end)
+        }
+    }
+}
 
 /* Средняя
  * Определить число ходов, за которое шахматный король пройдёт из клетки start в клетку end.
