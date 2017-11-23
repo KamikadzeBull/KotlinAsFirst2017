@@ -54,11 +54,14 @@ fun square(notation: String): Square{
  * Если любая из клеток некорректна, бросить IllegalArgumentException().
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3). */
-fun rookMoveNumber(start: Square, end: Square): Int = when{
-    start == end -> 0
-    (start.row == end.row) || (start.column == end.column) -> 1
-    else -> 2
-}
+fun rookMoveNumber(start: Square, end: Square): Int =
+    if ((start.inside()) && (end.inside()))
+        when{
+            start == end -> 0
+            (start.row == end.row) || (start.column == end.column) -> 1
+            else -> 2
+        }
+    else throw IllegalArgumentException()
 
 /**
  * Средняя
