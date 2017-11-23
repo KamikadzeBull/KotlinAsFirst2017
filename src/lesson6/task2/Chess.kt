@@ -103,8 +103,8 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = when (rookMoveNum
  * Слон может пройти через клетку (6, 4) к клетке (3, 7). */
 fun bishopMoveNumber(start: Square, end: Square): Int = when{
     start == end -> 0
-    abs(start.column - end.column) == abs(start.row - end.row) -> 1
-    ((start.column - end.column) %2 == 0) && ((start.row - end.row) %2 == 0) -> 2
+    (start.column + end.column == start.row + end.row) || (start.column - end.column == start.row - end.row) -> 1
+    (abs(start.column - end.column)%2 == abs(start.row - end.row)%2) -> 2
     else -> -1
 }
 
@@ -134,7 +134,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square>{
             for (i in 1..6){
                 mid = Square(mid.column+1, mid.row+1) // двигаемся по главной диаг. сверху вниз
                 // выясняем, лежит ли на побочной диагонали с конечной клеткой
-                if ((mid.column - end.column == end.row - mid.row)&&(mid.inside())) {
+                if ((mid.column - mid.row == end.column - end.row)&&(mid.inside())) {
                     return listOf(start,mid,end)
                 }
             }
@@ -142,7 +142,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square>{
             for (i in 1..6){
                 mid = Square(mid.column-1, mid.row-1) // двигаемся по главной диаг. снизу вверх
                 // выясняем, лежит ли на побочной диагонали с конечной клеткой
-                if ((mid.column - end.column == end.row - mid.row)&&(mid.inside())) {
+                if ((mid.column - mid.row == end.column - end.row)&&(mid.inside())) {
                     return listOf(start,mid,end)
                 }
             }
@@ -150,14 +150,14 @@ fun bishopTrajectory(start: Square, end: Square): List<Square>{
             for (i in 1..6){
                 mid = Square(mid.column-1, mid.row+1) // двигаемся по побочной диаг. сверху вниз
                 // выясняем, лежит ли на главной диагонали с конечной клеткой
-                if ((mid.column - end.column == mid.row - end.row)&&(mid.inside())){
+                if ((mid.column + mid.row == end.column + end.row)&&(mid.inside())){
                     return listOf(start,mid,end)
                 }
             }
             mid = start
             for (i in 1..6){
                 // выясняем, лежит ли на главной диагонали с конечной клеткой
-                while ((mid.column - end.column != mid.row - end.row)&&(mid.inside()))
+                while ((mid.column + mid.row != end.column + end.row)&&(mid.inside()))
                     mid = Square(mid.column+1, mid.row-1) // двигаемся по побочной диаг. снизу вверх
             }
             return listOf(start,mid,end)
