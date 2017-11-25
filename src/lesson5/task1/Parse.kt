@@ -173,7 +173,7 @@ fun bestLongJump(jumps: String): Int{
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int{
-    val regex1 = """((\d+\s+[%+-]+)(\s+|$))+""".toRegex()
+    val regex1 = """((\d+\s+[%+-]+)(\s+|$))*""".toRegex()
     val regex2 = """\d+\s+([%-]*\++[%-]*)""".toRegex()
     try{
         if ((!jumps.matches(regex1))||(!jumps.contains(regex2)))
