@@ -173,8 +173,8 @@ fun bestLongJump(jumps: String): Int{
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int{
-    val regex1 = """[0-9+%\s-]*""".toRegex()
-    val regex2 = """^\d+\s+.*\++""".toRegex()
+    val regex1 = """((\d+\s+[%+-]+)(\s+|$))+""".toRegex()
+    val regex2 = """\d+\s+([%-]*\++[%-]*)""".toRegex()
     try{
         if ((!jumps.matches(regex1))||(!jumps.contains(regex2)))
             throw Exception("неверный формат строки")
@@ -182,12 +182,12 @@ fun bestHighJump(jumps: String): Int{
         var attempts = mutableListOf<String>()
         for (str in sequence)
             attempts.add(str.value) // комбинации удачных попыток, вычлененных регексом
-        val tempStr = attempts.joinToString("")  //  объединяем в строку
+        val tempStr = attempts.joinToString(" ")  //  объединяем в строку
         attempts = tempStr.split(" ").toMutableList()  // чтобы перевести их в лист высот и символов
-        var max = -1
-        for (i in 1 until attempts.size step 2)
-            if ((attempts[i].contains(Regex("\\+"))) && (attempts[i-1].toInt() > max))
-                max = attempts[i-1].toInt()
+        var max = attempts[0].toInt()
+        for (i in 2 until attempts.size step 2)
+            if (attempts[i].toInt() > max)
+                max = attempts[i].toInt()
         return max
     }
     catch (e: Exception){
