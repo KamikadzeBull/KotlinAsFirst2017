@@ -16,14 +16,13 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку */
     fun notation(): String{
-        return if (this.inside()) {
-            String.format("%c%d", letters[column - 1], row)
+        return if (inside()) {
+            String.format("%c%d", 'a'+(column-1), row)
         }
         else ""
     }
 }
 
-val letters = listOf<Char>('a','b','c','d','e','f','g','h')
 
 /* Простая
  * Создаёт клетку по строковой нотации.
@@ -32,7 +31,7 @@ val letters = listOf<Char>('a','b','c','d','e','f','g','h')
 fun square(notation: String): Square{
     if ((notation[0] !in 'a'..'h') || (notation[1] !in '1'..'8'))
         throw IllegalArgumentException()
-    else return Square(letters.indexOf(notation[0])+1, notation[1].toString().toInt())
+    else return Square((notation[0]-'a'+1), notation[1].toString().toInt())
 }
 
 /* Простая
@@ -101,11 +100,14 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = when (rookMoveNum
  * Если любая из клеток некорректна, бросить IllegalArgumentException().
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7). */
-fun bishopMoveNumber(start: Square, end: Square): Int = when{
-    start == end -> 0
-    (start.column + end.column == start.row + end.row) || (start.column - end.column == start.row - end.row) -> 1
-    (abs(start.column - end.column)%2 == abs(start.row - end.row)%2) -> 2
-    else -> -1
+fun bishopMoveNumber(start: Square, end: Square): Int{
+    if ((start.inside())&&(end.inside())) return when{
+        start == end -> 0
+        (start.column + end.column == start.row + end.row) || (start.column - end.column == start.row - end.row) -> 1
+        (abs(start.column - end.column)%2 == abs(start.row - end.row)%2) -> 2
+        else -> -1
+    }
+    else throw IllegalArgumentException()
 }
 
 /* Сложная
