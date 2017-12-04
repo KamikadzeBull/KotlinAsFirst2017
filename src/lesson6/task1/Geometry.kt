@@ -114,22 +114,8 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой) */
     fun crossPoint(other: Line): Point{
-        val x: Double
-        val y: Double
-        when {
-            angle == 0.0 -> {
-                y = b
-                x = (b * cos(other.angle) - other.b) / sin(other.angle)
-            }
-            other.angle == 0.0 -> {
-                y = other.b
-                x = (other.b * cos(angle) - b) / sin(angle)
-            }
-            else -> {
-                x = (other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
-                y = (x * sin(other.angle) + other.b) / cos(other.angle)
-            }
-        }
+        val x = (other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
+        val y = (x * sin(other.angle) + other.b) / cos(other.angle)
         return Point(x,y)
     }
 
@@ -148,19 +134,8 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку */
 fun lineBySegment(s: Segment): Line{
-    val angle: Double
-    when{
-        s.begin.x == s.end.x -> angle = PI/2
-        s.begin.y == s.end.y -> angle = 0.0
-        else -> {
-            val c = Point(s.end.x, s.begin.y)
-            angle = if ((s.begin.x < s.end.x) && (s.begin.y < s.end.y) ||
-                        (s.begin.x > s.end.x) && (s.begin.y < s.end.y))
-                asin((s.end.distance(c)) / (s.begin.distance(s.end)))
-            else PI - asin((s.end.distance(c)) / (s.begin.distance(s.end)))
-        }
-    }
-    return Line(s.begin, angle)
+    val a = (atan2(s.end.y - s.begin.y, s.end.x - s.begin.x) + PI) % PI
+    return Line(s.end, a)
 }
 
 /* Средняя
@@ -174,8 +149,7 @@ fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a,b))
 fun bisectorByPoints(a: Point, b: Point): Line{
     val line = lineByPoints(a,b)
     val m = Point((a.x+b.x)/2, (a.y+b.y)/2)
-    val angle = if (line.angle in PI/2..PI) line.angle - PI/2
-                else line.angle + PI/2
+    val angle = (line.angle + PI/2) % PI
     return Line(m, angle)
 }
 
