@@ -139,7 +139,22 @@ fun bishopMoveNumber(start: Square, end: Square): Int{
  *          bishopTrajectory(Square(3, 1), Square(3, 7)) = listOf(Square(3, 1), Square(6, 4), Square(3, 7))
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них. */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square>{
+    var list = listOf<Square>()
+    when(bishopMoveNumber(start, end)){
+        0 -> list = listOf(start)
+        -1 -> return list
+        1 -> list = listOf(start, end)
+        2 -> {
+            for (i in 1..8)
+                for (j in 1..8)
+                    if ((bishopMoveNumber(Square(i,j),start) == 1)
+                            && (bishopMoveNumber(Square(i,j),end) == 1))
+                        list = listOf(start, Square(i,j), end)
+        }
+    }
+    return list
+}
 
 /* Средняя
  * Определить число ходов, за которое шахматный король пройдёт из клетки start в клетку end.
