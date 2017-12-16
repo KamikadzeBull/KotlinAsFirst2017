@@ -11,6 +11,21 @@ data class Square(val column: Int, val row: Int) {
      * Возвращает true, если клетка находится в пределах доски */
     fun inside(): Boolean = column in 1..8 && row in 1..8
 
+    fun onMainDiagWith(other: Square): Boolean =
+            column - row == other.column - other.row
+
+    fun onSecondaryDiagWith(other: Square): Boolean =
+            column + row == other.column + other.row
+
+    fun getsByDiags(other: Square): Boolean =
+            (column + row)%2 == (other.column + other.row)%2
+
+    fun onCommonColumnWith(other: Square): Boolean =
+            column == other.column
+
+    fun onCommonRowWith(other: Square): Boolean =
+            row == other.row
+
     /* Простая
      * Возвращает строковую нотацию для клетки.
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
@@ -29,9 +44,10 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException */
 fun square(notation: String): Square{
-    if ((notation[0] !in 'a'..'h') || (notation[1] !in '1'..'8'))
+    val regex = Regex("""[a-hA-H][1-8]""")
+    if (!notation.matches(regex))
         throw IllegalArgumentException()
-    else return Square((notation[0]-'a'+1), notation[1].toString().toInt())
+    else return Square((notation[0].toLowerCase()-'a'+1), notation[1].toString().toInt())
 }
 
 /* Простая
@@ -101,10 +117,11 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = when (rookMoveNum
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7). */
 fun bishopMoveNumber(start: Square, end: Square): Int{
-    if ((start.inside())&&(end.inside())) return when{
-        start == end -> 0
-        (start.column + end.column == start.row + end.row) || (start.column - end.column == start.row - end.row) -> 1
-        (abs(start.column - end.column)%2 == abs(start.row - end.row)%2) -> 2
+    if ((start.inside())&&(end.inside()))
+        return when{
+            start == end -> 0
+            start.onMainDiagWith(end) || start.onSecondaryDiagWith(end) -> 1
+            start.getsByDiags(end) -> 2
         else -> -1
     }
     else throw IllegalArgumentException()
@@ -122,50 +139,7 @@ fun bishopMoveNumber(start: Square, end: Square): Int{
  *          bishopTrajectory(Square(3, 1), Square(3, 7)) = listOf(Square(3, 1), Square(6, 4), Square(3, 7))
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них. */
-fun bishopTrajectory(start: Square, end: Square): List<Square>{
-    when(bishopMoveNumber(start, end)){
-        -1 -> return listOf()
-        0 -> return listOf(start)
-        1 -> return listOf(start,end)
-        else -> {
-            var mid = start
-            /* 6 - количество максимальных "элементарных" передвижений за один ход при известии о том, что нужно
-               сделать два полноценных хода для достижения конечной клетки. если число больше 6, дальше
-               совпадения промежуточной клетки с конечной клеткой по диагоналям не возникнет в любом случае */
-
-            for (i in 1..6){
-                mid = Square(mid.column+1, mid.row+1) // двигаемся по главной диаг. сверху вниз
-                // выясняем, лежит ли на побочной диагонали с конечной клеткой
-                if ((mid.column - mid.row == end.column - end.row)&&(mid.inside())) {
-                    return listOf(start,mid,end)
-                }
-            }
-            mid = start
-            for (i in 1..6){
-                mid = Square(mid.column-1, mid.row-1) // двигаемся по главной диаг. снизу вверх
-                // выясняем, лежит ли на побочной диагонали с конечной клеткой
-                if ((mid.column - mid.row == end.column - end.row)&&(mid.inside())) {
-                    return listOf(start,mid,end)
-                }
-            }
-            mid = start
-            for (i in 1..6){
-                mid = Square(mid.column-1, mid.row+1) // двигаемся по побочной диаг. сверху вниз
-                // выясняем, лежит ли на главной диагонали с конечной клеткой
-                if ((mid.column + mid.row == end.column + end.row)&&(mid.inside())){
-                    return listOf(start,mid,end)
-                }
-            }
-            mid = start
-            for (i in 1..6){
-                // выясняем, лежит ли на главной диагонали с конечной клеткой
-                while ((mid.column + mid.row != end.column + end.row)&&(mid.inside()))
-                    mid = Square(mid.column+1, mid.row-1) // двигаемся по побочной диаг. снизу вверх
-            }
-            return listOf(start,mid,end)
-        }
-    }
-}
+fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
 
 /* Средняя
  * Определить число ходов, за которое шахматный король пройдёт из клетки start в клетку end.
@@ -183,7 +157,23 @@ fun bishopTrajectory(start: Square, end: Square): List<Square>{
  * Если любая из клеток некорректна, бросить IllegalArgumentException().
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3). */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int{
+    if (start.inside() && end.inside()) when{
+        start == end -> return 0
+        start.onCommonColumnWith(end) || start.onMainDiagWith(end) || start.onSecondaryDiagWith(end)
+            -> return abs(start.row - end.row)
+        start.onCommonRowWith(end)
+            -> return abs(start.column - end.column)
+        else -> {
+            val dcolumn = abs(end.column - start.column)
+            val drow = abs(end.row - start.row)
+            if (dcolumn < drow)
+                return dcolumn + abs(start.column - end.column)
+            else return drow + abs(start.column - end.column)
+        }
+    }
+    else throw IllegalArgumentException()
+}
 
 /* Сложная
  * Вернуть список из клеток, по которым шахматный король может быстрее всего попасть из клетки start в клетку end.
@@ -196,7 +186,111 @@ fun kingMoveNumber(start: Square, end: Square): Int = TODO()
  *          (здесь возможен единственный вариант)
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них. */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square>{
+    val list = mutableListOf(start)
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    when{
+        kingMoveNumber(start, end) == 0
+        -> return list
+        start.onCommonColumnWith(end) -> {
+            if (start.row < end.row) {
+                for (i in (start.row + 1)..end.row)
+                    list.add(Square(start.column, i))
+            } else
+                for (i in (start.row - 1) downTo end.row)
+                    list.add(Square(start.column, i))
+            return list
+        }
+        start.onCommonRowWith(end) -> {
+            if (start.column < end.column) {
+                for (i in (start.column + 1)..end.column)
+                    list.add(Square(i, start.row))
+            } else
+                for (i in (start.column - 1) downTo end.column)
+                    list.add(Square(i, start.row))
+            return list
+        }
+        start.onMainDiagWith(end) -> {
+            var c = start.column
+            var r = start.row
+            if (start.column < end.column) {
+                while (Square(c,r) != end){
+                    c++
+                    r++
+                    list.add(Square(c,r))
+                }
+            } else
+                while (Square(c,r) != end){
+                    c--
+                    r--
+                    list.add(Square(c,r))
+                }
+            return list
+        }
+        start.onCommonRowWith(end) -> {
+            var c = start.column
+            var r = start.row
+            if (start.column < end.column) {
+                while (Square(c,r) != end){
+                    c++
+                    r--
+                    list.add(Square(c,r))
+                }
+            } else
+                while (Square(c,r) != end){
+                    c--
+                    r++
+                    list.add(Square(c,r))
+                }
+            return list
+        }
+        else -> {
+            val dcolumn = end.column - start.column
+            val drow = end.row - start.row
+            var c = start.column
+            var r = start.row
+            if (Math.abs(dcolumn) > Math.abs(drow))
+                while (!Square(c,r).onMainDiagWith(end) && !Square(c,r).onSecondaryDiagWith(end)){
+                    if (dcolumn < 0) c-- else c++
+                    list.add(Square(c,r))
+                }
+            else
+                while (!Square(c,r).onMainDiagWith(end) && !Square(c,r).onSecondaryDiagWith(end)){
+                    if (drow < 0) r-- else r++
+                    list.add(Square(c,r))
+                }
+            if (Square(c,r).onMainDiagWith(end)){
+                if (start.column < end.column) {
+                    while (Square(c,r) != end){
+                        c++
+                        r++
+                        list.add(Square(c,r))
+                    }
+                } else
+                    while (Square(c,r) != end){
+                        c--
+                        r--
+                        list.add(Square(c,r))
+                    }
+            }
+            else if (Square(c,r).onSecondaryDiagWith(end)){
+                if (start.column < end.column) {
+                    while (Square(c,r) != end){
+                        c++
+                        r--
+                        list.add(Square(c,r))
+                    }
+                } else
+                    while (Square(c,r) != end){
+                        c--
+                        r++
+                        list.add(Square(c,r))
+                    }
+            }
+            return list
+        }
+    }
+}
 
 /* Сложная
  * Определить число ходов, за которое шахматный конь пройдёт из клетки start в клетку end.
