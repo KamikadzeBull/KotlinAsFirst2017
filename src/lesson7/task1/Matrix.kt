@@ -25,8 +25,7 @@ interface Matrix<E> {
  * Метод для создания матрицы, должен вернуть РЕАЛИЗАЦИЮ Matrix<E>.
  * height = высота, width = ширина, e = чем заполнить элементы.
  * Бросить исключение IllegalArgumentException, если height или width <= 0. */
-fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
-        MatrixImpl(height, width, e)
+fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = MatrixImpl(height, width, e)
 
 /* Средняя сложность
  *
@@ -34,7 +33,6 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
 class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
 
     val m = mutableListOf<E>()
-
     init {
         require(height > 0 && width > 0)
         for (i in 0 until height * width) {
@@ -44,20 +42,15 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
 
     override fun get(row: Int, column: Int): E  =  m[row * width + column]
     override fun get(cell: Cell): E  = m[cell.row * width + cell.column]
-
     override fun set(row: Int, column: Int, value: E) {
         m[row * width + column] = value
     }
-
     override fun set(cell: Cell, value: E) {
         m[cell.row * width + cell.column] = value
     }
-
     override fun hashCode(): Int = m.hashCode()
-
     override fun equals(other: Any?) =
             other is MatrixImpl<*> && height == other.height && width == other.width && m == other.m
-
     override fun toString(): String {
         var str = ""
         for (i in 0 until height) {
