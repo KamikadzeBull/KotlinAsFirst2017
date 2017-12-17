@@ -33,20 +33,40 @@ fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> =
  * Реализация интерфейса "матрица" */
 class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
 
-    override fun get(row: Int, column: Int): E  = TODO()
+    val m = mutableListOf<E>()
 
-    override fun get(cell: Cell): E  = TODO()
+    init {
+        require(height > 0 && width > 0)
+        for (i in 0 until height * width) {
+            m.add(e)
+        }
+    }
+
+    override fun get(row: Int, column: Int): E  =  m[row * width + column]
+    override fun get(cell: Cell): E  = m[cell.row * width + cell.column]
 
     override fun set(row: Int, column: Int, value: E) {
-        TODO()
+        m[row * width + column] = value
     }
 
     override fun set(cell: Cell, value: E) {
-        TODO()
+        m[cell.row * width + cell.column] = value
     }
 
-    override fun equals(other: Any?) = TODO()
+    override fun hashCode(): Int = m.hashCode()
 
-    override fun toString(): String = TODO()
+    override fun equals(other: Any?) =
+            other is MatrixImpl<*> && height == other.height && width == other.width && m == other.m
+
+    override fun toString(): String {
+        var str = ""
+        for (i in 0 until height) {
+            for (j in 0 until width) {
+                str += "${(this[i,j])} "
+            }
+            str += "\n"
+        }
+        return str
+    }
 }
 
