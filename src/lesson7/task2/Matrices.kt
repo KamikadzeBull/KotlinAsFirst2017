@@ -52,7 +52,32 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  *  1  2  3  4
  * 10 11 12  5
  *  9  8  7  6                    */
-fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSpiral(height: Int, width: Int): Matrix<Int>{
+    var x = 1
+    var n = 1
+    val m = createMatrix(height, width, height*width)
+    while (n <= height*width) {
+        for (j in (x-1) until (width-x+1)) {
+            m[x-1,j] = n
+            n++
+        }
+        for (i in x until (height-x+1)) {
+            m[i,width-x] = n
+            n++
+        }
+        if (n >= height*width) return m
+        for (j in (width-x-1) downTo (x-1)) {
+            m[height-x,j] = n
+            n++
+        }
+        for (i in (height-x-1) downTo x) {
+            m[i,x-1] = n
+            n++
+        }
+        x++
+    }
+    return m
+}
 
 /* Сложная
  *
