@@ -165,7 +165,32 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E>{
  * 2 3 1
  * 1 2 3
  * 3 1 2                          */
-fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
+fun isLatinSquare(matrix: Matrix<Int>): Boolean{
+    if (matrix.height != matrix.width) return false
+    for (i in 0 until matrix.height) {
+        var num = 1
+        for (k in 1..matrix.width) {
+            for (j in 0 until matrix.width)
+                if (matrix[i, j] == num) {
+                    num++
+                    break
+                }
+            if (num == k) return false
+        }
+    }
+    for (j in 0 until matrix.width) {
+        var num = 1
+        for (k in 1..matrix.height) {
+            for (i in 0 until matrix.height)
+                if (matrix[i, j] == num) {
+                    num++
+                    break
+                }
+            if (num == k) return false
+        }
+    }
+    return true
+}
 
 /* Средняя
  *
