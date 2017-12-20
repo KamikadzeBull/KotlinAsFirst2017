@@ -49,17 +49,29 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
         m[cell.row * width + cell.column] = value
     }
     override fun hashCode(): Int = m.hashCode()
-    override fun equals(other: Any?) =
-            other is MatrixImpl<*> && height == other.height && width == other.width && m == other.m
+    override fun equals(other: Any?): Boolean {
+        return other is MatrixImpl<*> && equal(other)
+    }
+
+    fun equal(other: MatrixImpl<*>): Boolean {
+        if (height != other.height && width != other.width) return false
+        else for (i in 0 until height * width)
+            if (m[i] != other.m[i]) return false
+        return true
+    }
+
     override fun toString(): String {
-        var str = ""
+        val str = StringBuilder("")
         for (i in 0 until height) {
+            str.append("[")
             for (j in 0 until width) {
-                str += "${(this[i,j])} "
+                str.append("${(this[i,j])}")
+                if (j != width-1) str.append(" ")
             }
-            str += "\n"
+            str.append("]")
+            if (i != height-1) str.append(", ")
         }
-        return str
+        return str.toString()
     }
 }
 
