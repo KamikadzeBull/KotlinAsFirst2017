@@ -53,30 +53,30 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  * 10 11 12  5
  *  9  8  7  6                    */
 fun generateSpiral(height: Int, width: Int): Matrix<Int>{
-    var x = 1
-    var n = 1
-    val m = createMatrix(height, width, height*width)
-    while (n <= height*width) {
-        for (j in (x-1) until (width-x+1)) {
-            m[x-1,j] = n
-            n++
+    var circ = 1
+    var num = 1
+    val arr = createMatrix(height, width, height*width)
+    while (num <= height*width) {
+        for (j in (circ-1) until (width-circ+1)) {
+            arr[circ-1,j] = num
+            num++
         }
-        for (i in x until (height-x+1)) {
-            m[i,width-x] = n
-            n++
+        for (i in circ until (height-circ+1)) {
+            arr[i,width-circ] = num
+            num++
         }
-        if (n >= height*width) return m
-        for (j in (width-x-1) downTo (x-1)) {
-            m[height-x,j] = n
-            n++
+        if (num >= height*width) return arr
+        for (j in (width-circ-1) downTo (circ-1)) {
+            arr[height-circ,j] = num
+            num++
         }
-        for (i in (height-x-1) downTo x) {
-            m[i,x-1] = n
-            n++
+        for (i in (height-circ-1) downTo circ) {
+            arr[i,circ-1] = num
+            num++
         }
-        x++
+        circ++
     }
-    return m
+    return arr
 }
 
 /* Сложная
@@ -91,7 +91,22 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int>{
  *  1  2  3  3  2  1
  *  1  2  2  2  2  1
  *  1  1  1  1  1  1              */
-fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateRectangles(height: Int, width: Int): Matrix<Int> {
+    var circ = 0
+    val arr = createMatrix(height, width, 0)
+    while ((circ <= height/2) || (circ <= width/2)){
+        for (j in circ until width-circ) {
+            arr[circ, j] = circ + 1
+            arr[height-circ-1, j] = circ + 1
+        }
+        for (i in circ until height-circ) {
+            arr[i, circ] = circ + 1
+            arr[i, width-circ-1] = circ + 1
+        }
+        circ++
+    }
+    return arr
+}
 
 /* Сложная
  *
