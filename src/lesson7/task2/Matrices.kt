@@ -144,7 +144,15 @@ fun generateSnake(height: Int, width: Int): Matrix<Int>{
  * 1 2 3      7 4 1
  * 4 5 6      8 5 2
  * 7 8 9      9 6 3               */
-fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
+fun <E> rotate(matrix: Matrix<E>): Matrix<E>{
+    if (matrix.height != matrix.width)
+        throw IllegalArgumentException()
+    val arr = createMatrix(matrix.height, matrix.width, matrix[0,0])
+    for (j in arr.width - 1 downTo 0)
+        for (i in 0 until arr.height)
+            arr[i,j] = matrix[arr.width-j-1, i]
+    return arr
+}
 
 /* Сложная
  *
